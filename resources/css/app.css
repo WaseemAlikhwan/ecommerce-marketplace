@@ -1,0 +1,272 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --ds-bg: 247 244 238;
+    --ds-surface: 255 255 255;
+    --ds-elevated: 255 255 255;
+    --ds-ink-deep: 17 22 20;
+    --ds-primary: 27 77 62;
+    --ds-primary-hover: 20 58 47;
+    --ds-primary-soft: 232 240 235;
+    --ds-accent: 196 132 29;
+    --ds-accent-soft: 247 236 214;
+    --ds-success: 45 122 74;
+    --ds-success-soft: 229 244 234;
+    --ds-warning: 196 132 29;
+    --ds-warning-soft: 247 236 214;
+    --ds-danger: 176 45 38;
+    --ds-danger-soft: 252 232 230;
+    --ds-text: 20 24 22;
+    --ds-muted: 90 98 93;
+    --ds-text-inverse: 247 244 238;
+    --ds-border: 226 220 209;
+    --ds-focus: 27 77 62;
+    --ds-shadow-xs: 0 1px 0 rgba(17, 22, 20, 0.04);
+    --ds-shadow-sm: 0 1px 2px rgba(17, 22, 20, 0.04);
+    --ds-shadow-md: 0 10px 30px -18px rgba(17, 22, 20, 0.18);
+    --ds-shadow-lg: 0 24px 48px -28px rgba(17, 22, 20, 0.28);
+}
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply bg-canvas font-sans text-body text-ink antialiased;
+        text-rendering: optimizeLegibility;
+    }
+
+    [dir='rtl'] body {
+        font-feature-settings: 'kern' 1;
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+
+    :focus-visible {
+        @apply outline-none ring-2 ring-focus ring-offset-2 ring-offset-canvas;
+    }
+
+    ::selection {
+        background: rgb(var(--ds-primary-soft));
+        color: rgb(var(--ds-text));
+    }
+
+    img {
+        @apply select-none;
+    }
+
+    [dir='rtl'] .font-display,
+    [dir='rtl'] .text-display {
+        letter-spacing: -0.01em;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+}
+
+@layer components {
+    .ds-container {
+        @apply mx-auto w-full max-w-shell px-4 sm:px-6 lg:px-8;
+    }
+
+    .ds-page-title {
+        @apply font-display text-heading-2 text-ink sm:text-heading-1;
+    }
+
+    .ds-section-kicker {
+        @apply text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-accent;
+    }
+
+    .ds-section-title {
+        @apply font-display text-heading-2 text-ink md:text-heading-1;
+    }
+
+    .ds-muted {
+        @apply text-caption text-ink-muted;
+    }
+
+    .ds-price {
+        @apply font-numeric text-price tabular-nums tracking-tight text-ink;
+    }
+
+    .ds-label {
+        @apply text-label text-ink;
+    }
+
+    .ds-card {
+        @apply rounded-md border border-line bg-surface;
+    }
+
+    .ds-card-elevated {
+        @apply rounded-md border border-line bg-elevated shadow-md;
+    }
+
+    .ds-input {
+        @apply block w-full rounded-sm border-line bg-elevated px-3.5 py-3 text-body text-ink shadow-none placeholder:text-ink-muted focus:border-brand focus:ring-brand disabled:cursor-not-allowed disabled:bg-canvas disabled:text-ink-muted;
+    }
+
+    .ds-search {
+        @apply h-12 w-full rounded-sm border border-line bg-canvas pe-12 ps-11 text-sm text-ink placeholder:text-ink-muted transition focus:border-ink-deep focus:bg-elevated focus:ring-1 focus:ring-ink-deep;
+    }
+
+    .ds-hero-title {
+        @apply font-display font-semibold text-ink;
+        font-size: clamp(2.55rem, 6.6vw, 5rem);
+        line-height: 1.08;
+        letter-spacing: -0.03em;
+    }
+
+    [dir='rtl'] .ds-hero-title {
+        letter-spacing: -0.01em;
+    }
+
+    .ds-table-wrap {
+        @apply overflow-x-auto border border-line bg-surface;
+    }
+
+    .ds-table {
+        @apply min-w-full text-start text-sm;
+    }
+
+    .ds-table thead {
+        @apply bg-canvas text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-muted;
+    }
+
+    .ds-table th,
+    .ds-table td {
+        @apply border-b border-line px-4 py-3.5 align-middle;
+    }
+
+    .ds-table tbody tr:last-child td {
+        @apply border-b-0;
+    }
+
+    .ds-table tbody tr {
+        @apply transition-colors duration-200;
+    }
+
+    .ds-table tbody tr:hover {
+        @apply bg-canvas/80;
+    }
+
+    .ds-skeleton {
+        @apply animate-pulse rounded-sm bg-line/80;
+    }
+
+    .ds-backdrop {
+        @apply fixed inset-0 bg-ink-deep/45;
+    }
+
+    .ds-checkbox {
+        @apply rounded-sm border-line text-brand shadow-none focus:ring-brand;
+    }
+
+    .ds-radio {
+        @apply border-line text-brand shadow-none focus:ring-brand;
+    }
+
+    .ds-button-secondary {
+        @apply inline-flex items-center justify-center rounded-sm border border-ink/15 bg-transparent px-3.5 py-2 text-sm font-medium text-ink transition hover:border-ink/40 hover:bg-canvas disabled:cursor-not-allowed disabled:text-ink-muted;
+    }
+
+    .ds-link {
+        @apply text-sm text-ink-muted underline decoration-line underline-offset-4 transition hover:text-ink;
+    }
+
+    .ds-icon-btn {
+        @apply relative inline-flex h-11 w-11 items-center justify-center rounded-sm text-ink transition hover:bg-canvas;
+    }
+
+    .ds-pattern {
+        background-image:
+            linear-gradient(rgb(var(--ds-border) / 0.45) 1px, transparent 1px),
+            linear-gradient(90deg, rgb(var(--ds-border) / 0.45) 1px, transparent 1px);
+        background-size: 28px 28px;
+    }
+
+    .ds-arch {
+        clip-path: ellipse(92% 100% at 50% 100%);
+    }
+
+    .ds-product-media {
+        @apply relative block overflow-hidden bg-line/50;
+    }
+
+    .ds-product-media img {
+        @apply h-full w-full object-cover transition duration-500 ease-brand;
+    }
+
+    .group:hover .ds-product-media img,
+    .ds-product-media:hover img {
+        transform: scale(1.035);
+    }
+
+    .ds-reveal {
+        animation: ds-rise 640ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .ds-reveal-delay {
+        animation-delay: 90ms;
+    }
+
+    .ds-reveal-delay-2 {
+        animation-delay: 160ms;
+    }
+
+    .ds-float {
+        animation: ds-float 8s ease-in-out infinite;
+    }
+
+    .ds-gallery-stage {
+        @apply relative overflow-hidden bg-canvas;
+    }
+
+    .ds-gallery-stage:hover img {
+        transform: scale(1.03);
+    }
+
+    .ds-gallery-stage img {
+        @apply h-full w-full object-cover transition duration-500 ease-brand;
+    }
+
+    .workspace-rail {
+        @apply flex h-full min-h-screen w-64 shrink-0 flex-col bg-ink-deep text-ink-inverse;
+    }
+}
+
+@keyframes ds-rise {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes ds-float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-6px);
+    }
+}

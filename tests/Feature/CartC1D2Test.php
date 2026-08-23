@@ -36,7 +36,7 @@ class CartC1D2Test extends TestCase
             ->assertDontSee('CheckoutService', false);
     }
 
-    public function test_cart_page_shows_lines_subtotals_and_disabled_checkout_for_auth(): void
+    public function test_cart_page_shows_lines_subtotals_and_checkout_cta_for_auth(): void
     {
         $customer = User::factory()->create(['preferred_locale' => 'en']);
         $variant = $this->publishPurchasableVariant(quantity: 5, skuSuffix: 'UI');
@@ -48,8 +48,9 @@ class CartC1D2Test extends TestCase
             ->assertSee('Cart D2 Product UI', false)
             ->assertSee('Subtotals by currency', false)
             ->assertSee('Continue to checkout', false)
-            ->assertSee('Checkout opens in a later phase', false)
-            ->assertSee('disabled', false)
+            ->assertSee(route('checkout.create', absolute: false), false)
+            ->assertSee('Review address, shipping, and COD dues next.', false)
+            ->assertDontSee('Checkout opens in a later phase', false)
             ->assertDontSee($variant->sku, false)
             ->assertDontSee('quantity_available', false);
     }

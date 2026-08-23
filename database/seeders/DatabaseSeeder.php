@@ -15,6 +15,8 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             SuperAdminSeeder::class,
             CurrencySeeder::class,
+            SyriaGeoSeeder::class,
+            CommissionSettingSeeder::class,
         ]);
     }
 }

@@ -16,7 +16,7 @@
         </div>
         <nav class="ds-container hidden gap-7 overflow-x-auto text-sm lg:flex" aria-label="{{ __('Account') }}">
             <a href="{{ route('dashboard') }}" @class(['border-b-2 py-3', 'border-ink-deep text-ink' => request()->routeIs('dashboard'), 'border-transparent text-ink-muted hover:text-ink' => ! request()->routeIs('dashboard')])>{{ __('Overview') }}</a>
-            <a href="{{ route('account.orders') }}" @class(['border-b-2 py-3', 'border-ink-deep text-ink' => request()->routeIs('account.orders'), 'border-transparent text-ink-muted hover:text-ink' => ! request()->routeIs('account.orders')])>{{ __('Orders') }}</a>
+            <a href="{{ route('account.orders') }}" @class(['border-b-2 py-3', 'border-ink-deep text-ink' => request()->routeIs('account.orders*'), 'border-transparent text-ink-muted hover:text-ink' => ! request()->routeIs('account.orders*')])>{{ __('Orders') }}</a>
             <a href="{{ route('account.wishlist') }}" @class(['border-b-2 py-3', 'border-ink-deep text-ink' => request()->routeIs('account.wishlist'), 'border-transparent text-ink-muted hover:text-ink' => ! request()->routeIs('account.wishlist')])>{{ __('Wishlist') }}</a>
             <a href="{{ route('account.addresses') }}" @class(['border-b-2 py-3', 'border-ink-deep text-ink' => request()->routeIs('account.addresses'), 'border-transparent text-ink-muted hover:text-ink' => ! request()->routeIs('account.addresses')])>{{ __('Addresses') }}</a>
             <a href="{{ route('profile.edit') }}" @class(['border-b-2 py-3', 'border-ink-deep text-ink' => request()->routeIs('profile.*'), 'border-transparent text-ink-muted hover:text-ink' => ! request()->routeIs('profile.*')])>{{ __('Settings') }}</a>

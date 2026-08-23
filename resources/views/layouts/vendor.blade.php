@@ -18,7 +18,7 @@
             <nav class="flex-1 space-y-0.5 px-3" aria-label="{{ __('Vendor') }}">
                 <x-ui.nav-link tone="dark" :href="route('vendor.dashboard')" :active="request()->routeIs('vendor.dashboard')">{{ __('Overview') }}</x-ui.nav-link>
                 <x-ui.nav-link tone="dark" :href="route('vendor.products')" :active="request()->routeIs('vendor.products*')">{{ __('Products') }}</x-ui.nav-link>
-                <x-ui.nav-link tone="dark" :href="route('vendor.orders')" :active="request()->routeIs('vendor.orders')">{{ __('Orders') }}</x-ui.nav-link>
+                <x-ui.nav-link tone="dark" :href="route('vendor.orders')" :active="request()->routeIs('vendor.orders*')">{{ __('Orders') }}</x-ui.nav-link>
                 <x-ui.nav-link tone="dark" :href="route('vendor.store')" :active="request()->routeIs('vendor.store')">{{ __('Store profile') }}</x-ui.nav-link>
             </nav>
             <div class="p-3">

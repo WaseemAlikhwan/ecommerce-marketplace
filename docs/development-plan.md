@@ -135,6 +135,8 @@ This plan is incremental. Each phase produces a demonstrable, testable slice. La
 | **Expected output** | Full purchase of multi-vendor cart via COD. |
 | **Testing requirements** | Checkout feature tests; concurrent stock safety tests; vendor cannot see others’ orders; payment abstraction smoke test with COD driver. |
 
+**Checkout CHK (ADR-042) implemented (2026-08-24):** Multi-vendor COD place-order via `CheckoutService` with stock `lockForUpdate` decrement; flat per-VO shipping; one COD Payment per Vendor Order; Parent address snapshot; `PO-…` / `VO-…` codes; commission snapshot at placement; Syria geo + customer addresses; mail+database placement notifications; customer Parent Order and vendor Vendor Order UIs. Final gate: focused Checkout **24 / 252**; full Docker PHPUnit **393 / 3044**; Pint (Checkout-scoped) pass; `view:cache` pass; `npm run build` pass; AR/EN **960/960**; forbidden-ref pass; HTTP smoke login→cart→COD→order views with leftovers **0**. Coupons, Wishlist, Reviews, cancellations, and card charge remain out of Phase 7.
+
 ---
 
 ## Phase 8 — Commissions & Coupons

@@ -154,7 +154,7 @@ The following are explicitly **out of scope** for V1 unless later approved:
 | FR-INV-01 | Inventory is tracked on `product_variants.quantity` (always-variant model; ADR-029/032). |
 | FR-INV-02 | Inventory updates must reject invalid stock changes. **Negative stock is forbidden. Backorders are not allowed** (ADR-032; C-04 closed). |
 | FR-INV-03 | Order creation and inventory mutations must use database transactions where appropriate (Checkout phase). |
-| FR-INV-04 | Concurrent checkout must not oversell (locking/transaction strategy documented in architecture). Reserve-vs-decrement timing remains OPEN until Checkout (OPEN-021). |
+| FR-INV-04 | Concurrent checkout must not oversell (locking/transaction strategy in architecture). At successful checkout, **decrement** variant stock inside the same transaction (ADR-042 / OPEN-021 closed). |
 
 ### 5.7 Cart & Checkout
 
@@ -165,7 +165,9 @@ The following are explicitly **out of scope** for V1 unless later approved:
 | FR-CHK-01 | Checkout requires an authenticated Customer. Checkout creates a Parent Order containing Vendor Orders and Order Items. |
 | FR-CHK-02 | Each Vendor Order belongs to exactly one vendor. |
 | FR-CHK-03 | Checkout validates stock, product availability, shipping inputs, and payment method. |
-| FR-CHK-04 | Checkout captures currency/exchange-rate snapshot needed for historical integrity. |
+| FR-CHK-04 | Checkout snapshots money, currency, commission, and address data needed for historical integrity. V1 places mixed-currency orders **without** FX conversion; Parent shows per-currency COD dues (ADR-042). |
+| FR-CHK-05 | Successful checkout clears/consumes purchased cart lines (BR-CHK-05). |
+| FR-CHK-06 | Parent Order stores one shipping address snapshot; public codes use `PO-…` / `VO-…` (ADR-042). |
 
 ### 5.8 Orders
 
@@ -183,7 +185,7 @@ The following are explicitly **out of scope** for V1 unless later approved:
 | ID | Requirement |
 |----|-------------|
 | FR-SHP-01 | Shipping is associated with Vendor Orders (not only Parent Order). |
-| FR-SHP-02 | Different vendors may charge different shipping fees. |
+| FR-SHP-02 | Different vendors may charge different shipping fees. V1 uses a **configurable flat fee per Vendor Order** (ADR-042). |
 | FR-SHP-03 | Location data supports Syrian governorates and cities and is administratively manageable. |
 | FR-SHP-04 | Shipping rule model must allow future evolution without rewriting order core. |
 
@@ -194,7 +196,7 @@ The following are explicitly **out of scope** for V1 unless later approved:
 | FR-COM-01 | Platform takes commission on vendor sales. |
 | FR-COM-02 | Global platform commission is configurable (not hard-coded). |
 | FR-COM-03 | Vendor-specific commission override is supported. |
-| FR-COM-04 | Commission amounts relevant to an order should be determinable and historically traceable (snapshot rules in business rules). |
+| FR-COM-04 | Commission rate and amount are snapshotted on the Vendor Order at placement; base = item subtotal excluding shipping; recognition for reporting at Vendor Order `delivered` (ADR-042). |
 | FR-COM-05 | Architecture leaves room for future vendor subscription plans; subscription billing is not a V1 feature. |
 
 ### 5.11 Coupons
@@ -213,7 +215,7 @@ The following are explicitly **out of scope** for V1 unless later approved:
 |----|-------------|
 | FR-PAY-01 | V1 supports Cash on Delivery. |
 | FR-PAY-02 | Payment handling uses an abstraction so future gateways can be added without rewriting the order system. |
-| FR-PAY-03 | Payment status is tracked against the appropriate order level (see OPEN DECISION). |
+| FR-PAY-03 | COD payment status is tracked **per Vendor Order** (`pending` / `collected` / `cancelled`) (ADR-042). |
 | FR-PAY-04 | No real external payment gateway integration in V1. |
 
 ### 5.13 Reviews
@@ -336,18 +338,18 @@ P0 items resolved in `docs/p0-decisions.md` (approved 2026-08-11) are **removed*
 
 | Topic | Ambiguity |
 |-------|-----------|
-| Multi-currency cart / checkout | **Cart (ADR-041):** mixed currencies allowed; per-currency subtotals; no conversion. **Checkout charge/settlement** still OPEN (OPEN-005 / BR-CUR-04 / BR-CUR-08). |
-| Commission timing | On placement, confirmation, delivery, or COD collection? |
-| COD settlement | Who collects cash and how vendors are paid (platform ops process)? |
-| Coupon stacking | Platform + vendor coupons together? Multiple coupons? |
-| Review gate | Delivered required or purchased sufficient for V1? |
-| Cancellation window | Who cancels what, until which status? |
+| Multi-currency cart / checkout | **Cart (ADR-041):** mixed currencies allowed; per-currency subtotals; no conversion. **Checkout (ADR-042):** place without FX; per-currency COD dues. |
+| Commission timing | **Closed** ADR-042 — snapshot at placement; recognize at delivered |
+| COD settlement | Operational who-collects remains BR-PAY-05 OPEN; software tracks Payment per VO |
+| Coupon stacking | OPEN-007 — out of first Checkout slice (Phase 8) |
+| Review gate | Delivered required or purchased sufficient for V1? (OPEN-008) |
+| Cancellation window | Who cancels what, until which status? (OPEN-010) |
 | Refunds | Any V1 partial support for COD cancel-before-delivery? |
-| Shipping fee rules V1 | Flat per vendor, per city, weight-based, free threshold? |
-| Parent vs Vendor Order payment status | One payment record or per vendor order for COD? |
-| Notification channels V1 | Database/in-app only, email, SMS? |
-| Cart persistence | **Closed → ADR-041 / BR-CART-04/05** (guest session; auth DB; merge by variant with stock cap + report). |
-| Inventory reserve vs decrement | OPEN-021 / BR-INV-03 — Checkout phase only |
+| Shipping fee rules V1 | **Closed** ADR-042 — configurable flat fee per Vendor Order |
+| Parent vs Vendor Order payment status | **Closed** ADR-042 — Payment per Vendor Order |
+| Notification channels V1 | Checkout minimum mail + database (ADR-042); SMS later (OPEN-013 remainder) |
+| Cart persistence | **Closed → ADR-041 / BR-CART-04/05** |
+| Inventory reserve vs decrement | **Closed → ADR-042 / BR-INV-03** |
 | Store rating source | Product reviews aggregate vs separate store reviews? |
 | Store status enum details | Exact store statuses beyond sellable vs suspended |
 | In-flight orders on vendor suspend | Complete vs auto-cancel (OPEN-017) |

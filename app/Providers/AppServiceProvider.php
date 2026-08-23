@@ -2,10 +2,14 @@
 
 namespace App\Providers;
 
+use App\Contracts\PaymentGateway;
+use App\Contracts\ShippingCalculator;
 use App\Models\Attribute;
 use App\Models\AttributeValue;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Payments\CodPaymentGateway;
+use App\Shipping\FlatPerVendorShippingCalculator;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -17,7 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(ShippingCalculator::class, FlatPerVendorShippingCalculator::class);
+        $this->app->bind(PaymentGateway::class, CodPaymentGateway::class);
     }
 
     /**

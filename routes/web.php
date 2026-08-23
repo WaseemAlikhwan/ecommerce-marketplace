@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Account\ParentOrderController;
 use App\Http\Controllers\Account\VendorApplicationController;
 use App\Http\Controllers\Admin\AttributeController as AdminAttributeController;
 use App\Http\Controllers\Admin\AttributeValueController as AdminAttributeValueController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Storefront\CartController as StorefrontCartController;
 use App\Http\Controllers\Storefront\CartItemController as StorefrontCartItemController;
 use App\Http\Controllers\Storefront\CategoryController as StorefrontCategoryController;
+use App\Http\Controllers\Storefront\CheckoutController as StorefrontCheckoutController;
 use App\Http\Controllers\Storefront\HomeController;
 use App\Http\Controllers\Storefront\ProductController as StorefrontProductController;
 use App\Http\Controllers\Storefront\SearchController;
@@ -22,6 +24,7 @@ use App\Http\Controllers\Vendor\ProductController as VendorProductController;
 use App\Http\Controllers\Vendor\ProductImageController as VendorProductImageController;
 use App\Http\Controllers\Vendor\ProductPublicationController as VendorProductPublicationController;
 use App\Http\Controllers\Vendor\StoreController;
+use App\Http\Controllers\Vendor\VendorOrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -67,7 +70,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::view('/account/orders', 'account.orders')->name('account.orders');
+    Route::get('/checkout', [StorefrontCheckoutController::class, 'create'])->name('checkout.create');
+    Route::post('/checkout', [StorefrontCheckoutController::class, 'store'])->name('checkout.store');
+
+    Route::get('/account/orders', [ParentOrderController::class, 'index'])->name('account.orders');
+    Route::get('/account/orders/{parentOrder}', [ParentOrderController::class, 'show'])->name('account.orders.show');
     Route::view('/account/wishlist', 'account.wishlist')->name('account.wishlist');
     Route::view('/account/addresses', 'account.addresses')->name('account.addresses');
     Route::get('/account/vendor-application', [VendorApplicationController::class, 'show'])->name('account.vendor-application');
@@ -130,7 +137,8 @@ Route::middleware('auth')->group(function () {
         Route::put('/products/{product}/images/{product_image}/primary', [VendorProductImageController::class, 'primary'])->name('products.images.primary');
         Route::put('/products/{product}/images/{product_image}/translations', [VendorProductImageController::class, 'translations'])->name('products.images.translations');
         Route::delete('/products/{product}/images/{product_image}', [VendorProductImageController::class, 'destroy'])->name('products.images.destroy');
-        Route::view('/orders', 'vendor.placeholder')->name('orders');
+        Route::get('/orders', [VendorOrderController::class, 'index'])->name('orders');
+        Route::get('/orders/{vendorOrder}', [VendorOrderController::class, 'show'])->name('orders.show');
     });
 });
 

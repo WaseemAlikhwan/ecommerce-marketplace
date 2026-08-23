@@ -50,10 +50,10 @@ Conventions:
 |-------|--------|
 | **Actor** | Customer |
 | **Preconditions** | Authenticated Customer (guest must login/register first — P0-6). Cart non-empty. Valid shipping address in Syria. COD selected. Stock available. |
-| **Main flow** | 1. Customer starts checkout (redirect to auth if guest). 2. Confirms address and payment method (COD). 3. Optionally applies coupon(s) per stacking rules. 4. System revalidates prices, stock, coupons, shipping fees per vendor. 5. System opens DB transaction. 6. Creates Parent Order, Vendor Orders, Order Items. 7. Snapshots currency/FX and commission rates. 8. Adjusts inventory. 9. Records payment intent (COD pending). 10. Commits transaction. 11. Clears cart. 12. Notifies customer and each vendor; may notify admin if configured. |
-| **Alternative flow** | Stock race → fail gracefully, no partial order. Coupon invalid → reject coupon or fail checkout per rules. Mixed-currency policy violation → block with explanation (OPEN DECISION — P1). |
-| **Business rules** | BR-CHK-*, BR-VO-*, BR-SHP-*, BR-PAY-*, BR-INV-*, BR-CUR-*, BR-COM-*, BR-CPN-*, BR-CUS-05 |
-| **Result** | Parent Order created with one Vendor Order per vendor. |
+| **Main flow** | 1. Customer starts checkout (redirect to auth if guest). 2. Confirms **one** Parent shipping address (Syria governorate+city) and payment method (COD). 3. Coupons are **out of the first Checkout vertical slice** (Phase 8 / OPEN-007). 4. System revalidates prices, stock, and per-vendor flat shipping fees. 5. System opens DB transaction. 6. Creates Parent Order, Vendor Orders, Order Items with snapshots. 7. Snapshots commission rates/amounts (item subtotal base; no FX conversion). 8. Decrements inventory. 9. Records COD Payment **per Vendor Order** (`pending`). 10. Commits transaction. 11. Clears cart. 12. Notifies customer and each vendor via **mail + database**. |
+| **Alternative flow** | Stock race → fail gracefully, no partial order. Mixed currencies → **allowed**; Parent shows per-currency COD dues (ADR-042). |
+| **Business rules** | BR-CHK-*, BR-VO-*, BR-SHP-*, BR-PAY-*, BR-INV-*, BR-CUR-*, BR-COM-*, BR-CUS-05; coupons deferred (BR-CPN-* / Phase 8) |
+| **Result** | Parent Order created with one Vendor Order per vendor; public codes `PO-…` / `VO-…`. |
 
 ### UC-C05 — Track Orders
 

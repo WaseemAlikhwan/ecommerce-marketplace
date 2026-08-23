@@ -120,8 +120,8 @@ Legend:
 | ID | Type | Rule |
 |----|------|------|
 | BR-INV-01 | RULE | Inventory is authoritative on `product_variants.quantity`. No separate inventory table in Catalog V1 (ADR-032). |
-| BR-INV-02 | RULE | Checkout-phase inventory mutation must run inside a successful order transaction with concurrency protection. Exact **reserve vs decrement** timing is OPEN (BR-INV-03 / OPEN-021). Catalog phase only maintains on-hand quantity. |
-| BR-INV-03 | OPEN DECISION | Stock reservation model: decrement at order placement vs soft-reserve then confirm? Deferred to Checkout (OPEN-021). Recommended for V1: **decrement (or hard reserve) at successful checkout transaction**. |
+| BR-INV-02 | RULE | Checkout-phase inventory mutation must run inside a successful order transaction with concurrency protection (`lockForUpdate`). Catalog phase only maintains on-hand quantity. |
+| BR-INV-03 | RULE | At successful checkout, **decrement** `product_variants.quantity` inside the same transaction (ADR-042 / OPEN-021 closed). No soft-reserve table in V1. |
 | BR-INV-04 | RULE | System must prevent overselling under concurrency (row locks / equivalent) at checkout. |
 | BR-INV-05 | RULE | **Negative stock is forbidden** in V1 (C-04 closed / ADR-032). |
 | BR-INV-06 | RULE | Cancelling a Vendor Order before fulfillment should restore inventory for affected items (subject to cancellation rules). |
@@ -140,7 +140,7 @@ Legend:
 | BR-CART-04 | RULE | **Guest cart** persists in the **session**. **Authenticated cart** persists in the **database** (ADR-041). |
 | BR-CART-05 | RULE | On login/register, merge guest session cart into the user’s DB cart **by `variant_id`**, sum quantities, **cap to current stock**, drop unsellable lines, and **report adjusted and unavailable lines** (ADR-041). |
 | BR-CART-06 | RULE | Price shown in cart is informational; authoritative price is revalidated at checkout. |
-| BR-CART-07 | RULE | Mixed product currencies in one cart are **allowed**. Cart shows **separate totals per currency** and performs **no FX conversion** (ADR-041). Checkout charge/settlement currency remains OPEN (BR-CUR-04 / BR-CUR-08 / OPEN-005). |
+| BR-CART-07 | RULE | Mixed product currencies in one cart are **allowed**. Cart shows **separate totals per currency** and performs **no FX conversion** (ADR-041). Checkout may place mixed-currency orders without conversion (ADR-042 / BR-CUR-04). |
 | BR-CART-08 | RULE | Cart C1 does **not** place orders, decrement/reserve inventory, or implement Wishlist. |
 
 ---
@@ -154,8 +154,8 @@ Legend:
 | BR-CHK-03 | RULE | Each Vendor Order contains **Order Items** for that vendor only. |
 | BR-CHK-04 | RULE | Checkout fails atomically if any critical validation fails (stock, availability, required address, payment method). |
 | BR-CHK-05 | RULE | Successful checkout clears/consumes the purchased cart items. |
-| BR-CHK-06 | OPEN DECISION | Shipping address: one address for entire Parent Order, or per Vendor Order? Recommended V1: **one customer shipping address on Parent Order**, copied/referenced by Vendor Orders. |
-| BR-CHK-07 | OPEN DECISION | Order numbering scheme for Parent vs Vendor Orders. |
+| BR-CHK-06 | RULE | One customer shipping address on the Parent Order, snapshotted at placement and copied onto Vendor Orders (ADR-042). |
+| BR-CHK-07 | RULE | Public order codes: Parent `PO-…`, Vendor `VO-…`; internal bigint primary keys remain separate (ADR-042). |
 
 ---
 
@@ -179,7 +179,7 @@ Legend:
 | BR-SHP-01 | RULE | Shipping is associated with Vendor Orders. |
 | BR-SHP-02 | RULE | Vendors may have different shipping fees. |
 | BR-SHP-03 | RULE | Locations are data-managed (governorates, cities, extensible areas) — not hard-coded city lists in PHP. |
-| BR-SHP-04 | OPEN DECISION | V1 shipping calculation: flat fee per vendor, fee by governorate/city, free-shipping threshold, or manual vendor-set at confirmation? |
+| BR-SHP-04 | RULE | V1 shipping fee is a **configurable flat amount per Vendor Order** (store setting with platform default fallback), in the Vendor Order currency (ADR-042). Not hard-coded in application code. |
 | BR-SHP-05 | RULE | Shipping architecture must allow richer rules later without rewriting order placement core. |
 | BR-SHP-06 | OPEN DECISION | Who fulfills shipping operationally: vendor self-delivery, platform courier, customer pickup? |
 
@@ -193,8 +193,8 @@ Legend:
 | BR-COM-02 | RULE | A global default commission exists. |
 | BR-COM-03 | RULE | A vendor-specific override may replace the global default for that vendor. |
 | BR-COM-04 | RULE | Effective commission rate used for a Vendor Order should be **snapshotted** on the order (or commission line) so later config changes do not rewrite history. |
-| BR-COM-05 | OPEN DECISION | Commission base: item subtotal only, subtotal + shipping, or subtotal after coupons? |
-| BR-COM-06 | OPEN DECISION | Commission recognition timing for COD: order placed, delivered, or cash collected? |
+| BR-COM-05 | RULE | Commission **base** for V1 = Vendor Order **item subtotal** (sum of line minor units), **excluding shipping**. Coupons are out of the first Checkout slice (Phase 8) (ADR-042). |
+| BR-COM-06 | RULE | Commission rate and amount are **snapshotted at placement**; commission is **recognized** for reporting when the Vendor Order reaches **`delivered`**. No vendor wallet/settlement ledger in V1 (ADR-042). |
 | BR-COM-07 | FUTURE | Vendor subscription plans may later coexist with commissions; billing is not V1. |
 | BR-COM-08 | OPEN DECISION | Commission type for V1: percentage only vs percentage + optional fixed fee. |
 
@@ -222,8 +222,8 @@ Legend:
 |----|------|------|
 | BR-PAY-01 | RULE | V1 payment method: Cash on Delivery (COD). |
 | BR-PAY-02 | RULE | Payment processing goes through a payment gateway abstraction/interface. |
-| BR-PAY-03 | OPEN DECISION | Payment record granularity: one Payment on Parent Order vs Payment per Vendor Order for COD. |
-| BR-PAY-04 | OPEN DECISION | COD payment status lifecycle (e.g., `pending`, `collected`, `failed`, `cancelled`). |
+| BR-PAY-03 | RULE | For COD, create **one Payment record per Vendor Order** (ADR-042). |
+| BR-PAY-04 | RULE | COD payment statuses: `pending`, `collected`, `cancelled` (ADR-042). |
 | BR-PAY-05 | OPEN DECISION | Operational rule: who collects COD cash (vendor courier vs platform)? This affects settlement but may be outside software V1. |
 | BR-PAY-06 | FUTURE | Card/wallet gateways plug into the same abstraction later. |
 
@@ -273,11 +273,11 @@ Legend:
 | BR-CUR-01 | RULE | Supported currencies: SYP, USD. |
 | BR-CUR-02 | RULE | Each **store** has a default currency code (`stores.default_currency_code`, default SYP) (ADR-033). |
 | BR-CUR-03 | RULE | Each **product** has exactly one `currency_code` (inherits store default at creation; may be set to SYP or USD). Variants do **not** store currency; they share the product currency (ADR-033). |
-| BR-CUR-04 | OPEN DECISION | Multi-currency **checkout** strategy (charge/settlement): convert to customer currency, convert to platform currency, or another approved rule. **Cart** already allows mixed currencies with per-currency subtotals and no conversion (ADR-041 / BR-CART-07). Option “forbid mixed carts” is rejected. |
-| BR-CUR-05 | RULE | If conversion is used, persist `exchange_rate`, source currency, target currency, and converted amounts on the order (or order items) at checkout time. |
+| BR-CUR-04 | RULE | Mixed-currency **checkout placement is allowed without FX conversion**. Parent receipt shows **separate COD dues per currency**; each Vendor Order remains single-currency (ADR-042). Option “forbid mixed carts/orders” is rejected. |
+| BR-CUR-05 | RULE | If conversion is used in a later phase, persist `exchange_rate`, source currency, target currency, and converted amounts on the order (or order items) at checkout time. V1 placement under ADR-042 does **not** convert. |
 | BR-CUR-06 | RULE | Historical orders do not change when admin updates rates later. |
 | BR-CUR-07 | RULE | V1 exchange rates are admin-maintained (no external provider integration). |
-| BR-CUR-08 | OPEN DECISION | Customer preferred display currency vs charge currency for COD. **Remains OPEN.** |
+| BR-CUR-08 | OPEN DECISION | Customer preferred **display** currency (browse UI). **Charge currency** is not a separate V1 concept under ADR-042 (dues follow line/Vendor Order currencies). |
 | BR-CUR-09 | RULE | Catalog monetary amounts use unsigned integer **minor units** with currency exponents (SYP = 0, USD = 2). No floating-point money columns (ADR-033). |
 | BR-CUR-10 | RULE | Authoritative listing prices live on variants (`price_amount_minor`; optional `compare_at_amount_minor` for display only). Products do not store authoritative prices (ADR-033). |
 
@@ -357,9 +357,9 @@ Legend:
 |----|------|------|
 | BR-GEO-01 | RULE | Marketplace serves Syria only. |
 | BR-GEO-02 | RULE | Address model supports governorate and city as managed entities. |
-| BR-GEO-03 | OPEN DECISION | Include area/neighborhood/district as a third level in V1? |
+| BR-GEO-03 | FUTURE | Area/neighborhood/district as a third address level — **out of V1** (ADR-042). |
 | BR-GEO-04 | RULE | Do not hard-code all cities in application code; seed/manage via data. |
-| BR-GEO-05 | OPEN DECISION | Validate that shipping addresses must be within Syria only (recommended: yes). |
+| BR-GEO-05 | RULE | Shipping addresses must be within Syria only (ADR-042). |
 
 ---
 
@@ -391,16 +391,15 @@ Legend:
 
 **Catalog resolved** (see `docs/decisions.md` ADR-022…036, approved 2026-08-12): product `store_id` ownership; category depth/leaf assignment; admin taxonomy; translations + canonical slugs; product statuses including moderation `suspended`; always-variant sellable unit; attributes; SKU per store with composite FK; variant quantity stock; forbid negative stock/backorders; minor-unit money; product-level currency; images; vendor/admin catalog boundaries; soft-delete/archive (no hard-delete UI).
 
-Remaining (commerce / post-purchase; do not invent):
+Remaining (post-purchase / Phase 8–10; do not invent):
 
-1. Multi-currency **checkout** charge/settlement policy (OPEN-005 / BR-CUR-04 / BR-CUR-08) — cart mixed-currency display closed by ADR-041  
-2. Inventory reserve vs decrement at checkout (OPEN-021 / BR-INV-03)  
-3. Commission base and COD recognition timing  
-4. Coupon stacking limits  
-5. Review requires delivered vs purchased  
-6. Cancellation matrix (customer/vendor/admin × statuses)  
-7. Payment record level (parent vs vendor order)  
-8. V1 shipping fee algorithm  
-9. V1 notification channels  
-10. Wishlist product vs variant (OPEN-018); store status enum details; in-flight orders on vendor suspend; application re-apply/fields; admin permission catalog  
-*(Cart persistence/merge closed → ADR-041 / BR-CART-04/05.)*  
+1. Coupon stacking limits (OPEN-007) — coupons out of first Checkout slice  
+2. Review requires delivered vs purchased (OPEN-008)  
+3. Review uniqueness (OPEN-009)  
+4. Cancellation matrix (OPEN-010)  
+5. Notification channels beyond Checkout V1 mail + database minimum (OPEN-013 remainder; SMS later)  
+6. Wishlist product vs variant (OPEN-018)  
+7. In-flight orders on vendor suspend (OPEN-017)  
+8. Admin KPI/report set (OPEN-020); BR-PAY-05 / BR-SHP-06 operational collector/shipper; BR-CUR-08 display preference; BR-GEO-03 area level; BR-VO-04/05 full status matrices; application re-apply/fields; admin permission catalog  
+
+*(Cart persistence/merge closed → ADR-041. Checkout V1 contract closed → ADR-042 / CHK-0.)*  

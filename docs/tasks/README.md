@@ -6,7 +6,9 @@ Large implementation prompts are stored here once and executed as small slices.
 
 | File | Status |
 |------|--------|
-| `cart-c1.md` | READY — planning only; implement C1-A…D only when explicitly requested |
+| `cart-c1.md` | DONE — Cart C1 accepted (2026-08-23); focused 42/437; full Docker 369/2791 |
+| `checkout-readiness.md` | READY — CHK-0 approved 2026-08-23 |
+| `checkout-chk.md` | **DONE** — CHK-0…CHK-E accepted (2026-08-24); focused **24 / 252**; full Docker **393 / 3044** |
 | `storefront-s8c-recovery.md` | DONE — S8C accepted |
 
 ## Rules
@@ -18,6 +20,8 @@ Large implementation prompts are stored here once and executed as small slices.
 5. Run the full Docker suite and browser matrix only in the final gate slice.
 6. Mark interrupted work `IN PROGRESS`; never document it as complete.
 7. Archive or delete a task file after its final gate is accepted.
+8. Do not implement Checkout until `checkout-chk.md` is READY and a named CHK-* slice is requested.
+9. Do not start Wishlist from Checkout tasks.
 
 ## Short Prompt Template
 

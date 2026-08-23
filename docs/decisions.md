@@ -734,6 +734,55 @@ S8B wired these scopes into every public Storefront catalog route and removed th
 
 ---
 
+## ADR-042 — Checkout V1: mixed-currency COD, stock decrement, flat shipping, payment grain
+
+**Status:** Accepted  
+
+**Decision (approved 2026-08-23, Checkout CHK-0):**
+
+### Mixed currency
+- Place mixed-currency carts **without FX conversion**.
+- Parent receipt shows **separate COD dues per currency**.
+- Each Vendor Order (and its COD Payment) remains **single-currency**.
+
+### Inventory
+- On successful place-order, **decrement** `product_variants.quantity` inside the same DB transaction with `lockForUpdate`.
+- No soft-reserve table in V1.
+
+### Shipping (V1)
+- **Configurable flat fee per Vendor Order** (store setting with platform default fallback), in the VO currency.
+- Not hard-coded in application constants.
+
+### Payment / COD
+- **One Payment record per Vendor Order**.
+- COD statuses: `pending` | `collected` | `cancelled`.
+
+### Address & codes
+- One Parent shipping address snapshot at placement, copied onto Vendor Orders.
+- Public codes: Parent `PO-…`, Vendor `VO-…` (internal bigint PKs remain separate).
+- Syria-only governorate+city seed; **no area** level in V1.
+
+### Commission
+- Base = Vendor Order **item subtotal excluding shipping**.
+- Rate and amount **snapshotted at placement**; recognized for reporting when VO reaches **`delivered`**.
+- No vendor wallet/settlement ledger in V1.
+
+### Notifications (Checkout V1 minimum)
+- **Mail + database** on successful placement (customer Parent + each vendor VO).
+- SMS and richer channels remain OPEN-013 remainder.
+
+### Explicit non-goals for Checkout V1 / CHK
+- Wishlist, Coupons, Reviews/ratings, card/wallet charge, Redis, FULLTEXT, settlement ledger, cancellations matrix (Phase 9).
+
+**Closes:** OPEN-005 (checkout place/charge currency for V1), OPEN-006, OPEN-011, OPEN-012, OPEN-021; related BR-CHK / BR-PAY / BR-SHP / BR-COM / BR-CUR / BR-INV / BR-GEO RULE rows synced in CHK-0.  
+**Narrows:** OPEN-013 to mail+DB minimum for Checkout; SMS later.  
+**Does not close:** OPEN-007 coupons; OPEN-008/009 reviews; OPEN-010 cancellation; OPEN-018 Wishlist.  
+
+**Source:** Checkout CHK-0 approval; readiness `docs/tasks/checkout-readiness.md`; execution `docs/tasks/checkout-chk.md`.  
+**Implemented:** Checkout CHK (CHK-A…CHK-E) accepted 2026-08-24 — final gate focused **24 / 252**, full Docker PHPUnit **393 / 3044**.
+
+---
+
 ## OPEN Decisions (Require Human Approval)
 
 ### OPEN-001 — Stores per vendor
@@ -754,18 +803,11 @@ S8B wired these scopes into every public Storefront catalog route and removed th
 
 ### OPEN-005 — Multi-currency checkout policy
 
-**Question:** At **checkout**, if the cart has SYP and USD items, do we convert to customer currency, convert to platform currency, or charge/settle another way?  
-**Cart clarification (ADR-041):** Mixed-currency **carts are allowed**; cart shows **per-currency subtotals** with **no conversion**. Forbidding mixed carts is rejected for Cart.  
-**Impact:** CheckoutService, snapshots, COD collection UX.  
-**Must decide before Checkout phase.** Catalog stores listing currency only (ADR-033).
+**Status:** Closed → ADR-042  
 
 ### OPEN-006 — Commission base and COD recognition timing
 
-**Questions:**
-- Commission on items only, items after coupons, and/or shipping?
-- Recognized at placement, delivery, or cash collection?
-
-**Impact:** Financial reports and vendor balances (even if settlement is manual).
+**Status:** Closed → ADR-042  
 
 ### OPEN-007 — Coupon stacking
 
@@ -789,18 +831,16 @@ S8B wired these scopes into every public Storefront catalog route and removed th
 
 ### OPEN-011 — Payment record granularity for COD
 
-**Question:** Payment on Parent Order vs per Vendor Order?  
-**Recommendation:** Per Vendor Order if vendors can be paid/fulfilled independently; Parent-level if COD is collected once for the whole delivery batch. Operational model matters.
+**Status:** Closed → ADR-042  
 
 ### OPEN-012 — V1 shipping fee algorithm
 
-**Question:** Flat per vendor, by governorate/city table, free threshold, or manual?  
-**Recommendation:** Governorate/city-based table or flat fee per vendor — choose one.
+**Status:** Closed → ADR-042  
 
 ### OPEN-013 — Notification channels for V1
 
-**Question:** Database/in-app only, email, SMS?  
-**Recommendation:** Database + email via Mailpit locally; SMS later.
+**Status:** Partially closed → ADR-042 (Checkout V1 minimum = mail + database; SMS/other channels remain open)  
+**Remainder:** SMS and additional channels beyond mail+database.  
 
 ### OPEN-014 — Guest cart / guest checkout
 
@@ -833,9 +873,7 @@ S8B wired these scopes into every public Storefront catalog route and removed th
 
 ### OPEN-021 — Inventory reserve vs decrement at checkout (C-05)
 
-**Question:** Decrement stock inside the successful checkout transaction vs soft-reserve then confirm?  
-**Status:** OPEN — deferred to Checkout phase. Catalog stores on-hand `product_variants.quantity` only (ADR-032).  
-**Related:** BR-INV-02 wording vs BR-INV-03; do not implement in Catalog.
+**Status:** Closed → ADR-042 (decrement in place-order transaction with `lockForUpdate`; no soft-reserve table in V1)  
 
 ---
 
@@ -846,16 +884,16 @@ S8B wired these scopes into every public Storefront catalog route and removed th
 | Application status includes `suspended` | Suspension usually post-approval | **Resolved** ADR-014 / P0-1 |
 | “Each approved vendor can own a store” | Singular wording vs possible multi-store | **Resolved** ADR-015 / P0-2 |
 | Negative stock RULE vs OPEN wording (C-04) | FR vs BR conflict | **Resolved** ADR-032 — forbid negative; no backorders |
-| Inventory decrement RULE vs reserve OPEN (C-05) | BR-INV-02 vs BR-INV-03 | **Deferred** OPEN-021 — Checkout phase |
+| Inventory decrement RULE vs reserve OPEN (C-05) | BR-INV-02 vs BR-INV-03 | **Resolved** ADR-042 — decrement at checkout |
 | Sellable unit / no-variant products | Product vs variant FKs | **Resolved** ADR-029 — always-variant |
 | Brand ownership OPEN | Admin vs vendor brands | **Resolved** ADR-024 |
 | Publishing moderation OPEN | Self-publish vs queue | **Resolved** ADR-027 |
 | SKU uniqueness OPEN | Global vs per vendor/store | **Resolved** ADR-031 |
 | Reviews after purchase **and preferably** after delivery | Preference vs hard gate | OPEN-008 |
 | Coupons feature-rich vs “do not over-engineer” | Wide coupon matrix | Implement core fields; strict stacking (OPEN-007) |
-| Multi-currency products + single COD collection | Charge currency unclear | OPEN-005, OPEN-011 (Catalog currency settled in ADR-033) |
-| Commission configurable + COD cash flow | When commission is “earned” unclear | OPEN-006 |
-| Shipping evolution vs V1 concreteness | Need one calculator now | OPEN-012 |
+| Multi-currency products + single COD collection | Charge currency unclear | **Resolved** ADR-042 (place without FX; per-currency COD dues) |
+| Commission configurable + COD cash flow | When commission is “earned” unclear | **Resolved** ADR-042 |
+| Shipping evolution vs V1 concreteness | Need one calculator now | **Resolved** ADR-042 — flat per VO |
 | Roles include Vendor & Customer | Dual-role account unclear | **Resolved** ADR-017 / P0-4 |
 
 P0 product decisions remain accepted via `docs/p0-decisions.md` (do not reopen). Catalog gate decisions above are accepted 2026-08-12. Remaining commerce OPENs stay open.

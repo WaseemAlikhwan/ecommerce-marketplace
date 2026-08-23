@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[Fillable(['user_id', 'status'])]
@@ -34,6 +35,16 @@ class Vendor extends Model
     public function store(): HasOne
     {
         return $this->hasOne(Store::class);
+    }
+
+    public function vendorOrders(): HasMany
+    {
+        return $this->hasMany(VendorOrder::class);
+    }
+
+    public function commissionOverride(): HasOne
+    {
+        return $this->hasOne(VendorCommissionOverride::class);
     }
 
     public function isSuspended(): bool

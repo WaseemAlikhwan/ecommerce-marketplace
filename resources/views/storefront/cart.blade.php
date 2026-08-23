@@ -97,17 +97,15 @@
                         <div class="mt-8 space-y-3">
                             @auth
                                 <x-ui.button
+                                    :href="route('checkout.create')"
                                     variant="primary"
                                     class="w-full"
                                     type="button"
-                                    disabled
-                                    aria-disabled="true"
-                                    title="{{ __('Checkout opens in a later phase') }}"
                                 >{{ __('Continue to checkout') }}</x-ui.button>
-                                <p class="text-center text-caption text-ink-muted">{{ __('Checkout opens in a later phase') }}</p>
+                                <p class="text-center text-caption text-ink-muted">{{ __('Review address, shipping, and COD dues next.') }}</p>
                             @else
                                 <x-ui.button :href="route('login')" variant="primary" class="w-full" type="button">{{ __('Log in to continue') }}</x-ui.button>
-                                <p class="text-center text-caption text-ink-muted">{{ __('Sign in to keep your bag and continue when checkout opens.') }}</p>
+                                <p class="text-center text-caption text-ink-muted">{{ __('Sign in to keep your bag and continue to checkout.') }}</p>
                             @endauth
                         </div>
                     </div>

@@ -200,7 +200,7 @@ Do **not** use `name_ar` / `name_en` columns.
 
 - Authoritative stock: `product_variants.quantity` (unsigned; no negative stock; no backorders — ADR-032).
 - No separate `inventories` table or stock-movement ledger in Catalog.
-- Checkout (later) uses transactions + row locking (`lockForUpdate`) on variant quantity rows; reserve-vs-decrement remains OPEN-021.
+- Checkout **decrements** variant quantity inside the successful place-order transaction with `lockForUpdate` (ADR-042 / OPEN-021 closed).
 
 ### 5.3 Orders
 
@@ -344,7 +344,7 @@ CodPaymentGateway implements PaymentGateway
 ```
 
 - Checkout depends on interface, not COD concretions.
-- Payment records store method, status, amounts, and foreign keys to order level decided in OPEN DECISION.
+- Payment records store method, status, amounts, and FK to **Vendor Order** (ADR-042 / OPEN-011 closed). COD statuses: `pending`, `collected`, `cancelled`.
 - Adding Stripe/local gateway later = new implementation + config, not order rewrite.
 
 ---
@@ -355,12 +355,13 @@ CodPaymentGateway implements PaymentGateway
 ShippingCalculator (interface)
   └── calculate(VendorOrderDraft, Address): Money
 
-V1RuleShippingCalculator implements ShippingCalculator
-  # flat/by-city/etc based on approved business rule
+FlatPerVendorShippingCalculator implements ShippingCalculator
+  # configurable store flat fee + platform default (ADR-042)
 ```
 
 - Persist shipping amount on Vendor Order.
-- Keep Parent Order able to sum vendor shipping totals for customer receipt.
+- Keep Parent Order able to sum vendor shipping totals for customer receipt (per currency when mixed).
+- V1 rule is **configurable flat fee per Vendor Order** — not hard-coded constants; geo tariff tables are a later calculator implementation.
 
 ---
 
@@ -368,7 +369,8 @@ V1RuleShippingCalculator implements ShippingCalculator
 
 - Config entities: `commission_settings` (global) + `vendor_commission_overrides`.
 - `CommissionService::resolve(vendor)` → rate.
-- Snapshot onto Vendor Order at placement.
+- Snapshot rate + amount onto Vendor Order at placement; base = item subtotal excluding shipping (ADR-042).
+- Recognition for reporting when Vendor Order is `delivered` (no wallet ledger in V1).
 - Future subscription plans can add another resolver branch without changing order schema dramatically.
 
 ---
@@ -399,12 +401,10 @@ V1RuleShippingCalculator implements ShippingCalculator
 ## 18. Multi-Currency
 
 - Catalog: store default currency + product `currency_code`; variant amounts in minor units of that currency (ADR-033).
-- Reference table of rates (from_currency, to_currency, rate, effective_at) for **checkout/display conversion later**.
-- At checkout, persist rate + converted amounts when conversion is used.
-- Display layer may convert for browsing using current rates; orders always show historical snapshots.
-
-Exact **checkout** conversion / charge-currency policy remains **OPEN** (OPEN-005 / BR-CUR-04 / BR-CUR-08).  
-**Cart (ADR-041):** mixed-currency carts are allowed; presentation uses **per-currency subtotals** with **no FX conversion**.
+- **Cart (ADR-041):** mixed-currency carts allowed; per-currency subtotals; no FX.
+- **Checkout (ADR-042):** mixed-currency placement allowed **without** conversion; Parent shows per-currency COD dues; each Vendor Order + its COD Payment is single-currency.
+- Reference rate table remains available for a **later** phase if conversion is ever introduced; not required for V1 placement.
+- Display layer may later convert for browsing using current rates; orders always show historical snapshots when conversion exists.
 
 ---
 
@@ -497,12 +497,12 @@ Prefer testing services and policies over bloated controller tests.
 
 ## 25. Open Architecture Points (Need Product Decisions)
 
-P0 auth/identity/locale items are closed (ADR-014 … ADR-021). Catalog schema-shaping items are closed (ADR-022 … ADR-036). Remaining:
+P0 auth/identity/locale items are closed (ADR-014 … ADR-021). Catalog schema-shaping items are closed (ADR-022 … ADR-036). Cart C1 closed (ADR-041). Checkout V1 contract closed (ADR-042). Remaining:
 
-1. Payment FK at Parent Order vs Vendor Order  
-2. Final shipping calculator rule for V1  
-3. FX policy for mixed-currency carts (OPEN-005)  
-4. Whether to introduce Spatie Permission later (not now)  
-5. Exact admin permission catalog (BR-PERM-07)  
-6. Inventory reserve vs decrement at checkout (OPEN-021)  
-7. Soft-delete scope for non-catalog entities (users, etc.)  
+1. Whether to introduce Spatie Permission later (not now)  
+2. Exact admin permission catalog (BR-PERM-07)  
+3. Soft-delete scope for non-catalog entities (users, etc.)  
+4. Coupon stacking (OPEN-007); review gates (OPEN-008/009); cancellation matrix (OPEN-010)  
+5. Notification channels beyond mail + database (OPEN-013 remainder)  
+6. Wishlist target (OPEN-018); in-flight suspend policy (OPEN-017); admin KPI set (OPEN-020)  
+7. Operational COD collector / shipper narratives (BR-PAY-05 / BR-SHP-06)  

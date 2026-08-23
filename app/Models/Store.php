@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Storage;
     'status',
     'rating',
     'default_currency_code',
+    'flat_shipping_amount_minor',
 ])]
 class Store extends Model
 {
@@ -39,6 +40,7 @@ class Store extends Model
         return [
             'status' => StoreStatus::class,
             'rating' => 'decimal:2',
+            'flat_shipping_amount_minor' => 'integer',
         ];
     }
 

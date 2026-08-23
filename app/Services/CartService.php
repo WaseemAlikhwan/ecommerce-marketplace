@@ -89,6 +89,17 @@ class CartService
     }
 
     /**
+     * Clear all lines for an authenticated cart (used after successful checkout).
+     */
+    public function clear(User $user): void
+    {
+        DB::transaction(function () use ($user): void {
+            $cart = $this->lockCart($user);
+            CartItem::query()->where('cart_id', $cart->id)->delete();
+        });
+    }
+
+    /**
      * Merge the guest session cart into the authenticated DB cart.
      *
      * Lock order: cart → variant (ascending ids) → item.

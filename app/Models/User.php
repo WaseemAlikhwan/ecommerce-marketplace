@@ -47,6 +47,16 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
         return $this->hasOne(Cart::class);
     }
 
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(CustomerAddress::class);
+    }
+
+    public function parentOrders(): HasMany
+    {
+        return $this->hasMany(ParentOrder::class);
+    }
+
     public function vendorApplications(): HasMany
     {
         return $this->hasMany(VendorApplication::class);

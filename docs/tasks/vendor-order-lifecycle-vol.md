@@ -3,7 +3,7 @@
 **Status:** DONE (2026-08-24 — VOL-A…C accepted; planning freeze retained for reference)  
 **Authority:** ADR-001, ADR-002, ADR-006, ADR-012, **ADR-042**; BR-VO / BR-CHK / BR-COM / BR-PAY / BR-INV / BR-CAN / BR-NTF; Phase 7 remainder + Phase 9 boundary  
 **Baseline:** Checkout CHK DONE (ADR-042); VO rows exist at `pending` after COD placement; customer Parent Order + vendor Vendor Order **read** UIs exist  
-**Related OPEN:** OPEN-010 cancellation matrix (**PENDING** — recommended rule below, not implemented here); OPEN-017 vendor suspend in-flight (**out of this task**)
+**Related OPEN:** OPEN-010 cancellation matrix (**PENDING** in VOL — V1 freeze + execution tracked in [`order-cancellation-can.md`](./order-cancellation-can.md); not implemented here); OPEN-017 vendor suspend in-flight (**out of this task**)
 
 Implement only the named slice when asked. Do **not** start Wishlist, Coupons, Reviews, card charge, Redis, settlement ledgers, or full Phase 9 cancellation/refund productization unless a later approved slice says so.
 
@@ -20,17 +20,17 @@ Implement only the named slice when asked. Do **not** start Wishlist, Coupons, R
 | Parent Order status | Parent stays **`placed`** for VOL | BR-VO-05 Parent derivation **deferred** (no auto `delivered`/`partial` on Parent in VOL). |
 | Customer visibility | Customer sees VO status labels on existing Parent Order show/index | No customer transition buttons in VOL. |
 | Notifications | Mail + database on `confirmed`, `shipped`, `delivered` (BR-NTF-01) | Same channel floor as ADR-042. |
-| Cancellations | **PENDING** — OPEN-010 not closed; no cancel/stock-restore code in VOL | Recommended rule recorded below for a future Phase 9 / CAN slice. |
+| Cancellations | **Out of VOL** — OPEN-010 V1 freeze lives in [`order-cancellation-can.md`](./order-cancellation-can.md) (**READY**; not implemented in VOL) | No cancel/stock-restore code in VOL-A…C. |
 
-### Recommended simple cancellation rule (OPEN-010 — **PENDING**, not implemented in VOL)
+### Recommended simple cancellation rule (OPEN-010 — **PENDING** in VOL; CAN task READY)
 
-> **Until a later slice closes OPEN-010:**  
+> **Until CAN implements OPEN-010 V1** (see [`order-cancellation-can.md`](./order-cancellation-can.md)):  
 > 1. **Customer:** may cancel a **Parent Order** only while **every** Vendor Order is still `pending` (all-or-nothing). No independent VO cancel by customer in V1.  
 > 2. **Vendor:** may cancel **own** VO only while status is `pending` or `confirmed` (before `shipped`). Sibling VOs unaffected.  
 > 3. On cancel: restore stock (BR-CAN-04 / BR-INV-06); set COD Payment to `cancelled` / do-not-collect (BR-REF-02 direction); no coupon logic (coupons not in V1 checkout).  
 > 4. After `shipped` or `delivered`: no cancel in V1 (returns/refunds FUTURE).
 
-Do **not** implement cancellations, stock restore, or Payment→cancelled in VOL-A…C.
+Do **not** implement cancellations, stock restore, or Payment→cancelled in VOL-A…C. Use CAN-* slices only.
 
 ## Slice map
 
@@ -118,13 +118,13 @@ Do **not** implement cancellations, stock restore, or Payment→cancelled in VOL
 
 **Verification (VOL-C):** `OrderViewService::parentIndexRows` exposes query-free `vendor_statuses`; account Parent show/index render shipment labels only (no advance forms). Focused `VendorOrderLifecycleVolCTest` **2 / 35**. Task **DONE**.
 
-**Stop after VOL-C.** (Completed.) Do not start OPEN-010 cancellations, Wishlist, Coupons, or Reviews.
+**Stop after VOL-C.** (Completed.) Do not start Wishlist, Coupons, or Reviews from VOL. Cancellations proceed only via [`order-cancellation-can.md`](./order-cancellation-can.md) CAN-* slices.
 
 ---
 
 ## Hard boundaries (every slice)
 
-- No cancellation/stock-restore/Payment→cancelled implementation (OPEN-010 PENDING).  
+- No cancellation/stock-restore/Payment→cancelled implementation in VOL (OPEN-010 V1 is tracked in [`order-cancellation-can.md`](./order-cancellation-can.md)).  
 - No Wishlist, Coupons, Reviews, ratings, card charge, Redis, FULLTEXT, settlement ledger.  
 - No public SKU or exact inventory quantity on storefront catalog surfaces.  
 - Vendor Order authorization remains fail-closed.  

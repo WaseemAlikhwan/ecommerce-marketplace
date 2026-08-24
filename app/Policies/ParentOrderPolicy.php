@@ -27,6 +27,15 @@ class ParentOrderPolicy
         return false;
     }
 
+    /**
+     * CAN-A: customer may cancel own Parent Order (eligibility enforced in service).
+     */
+    public function cancel(User $user, ParentOrder $parentOrder): bool
+    {
+        return $user->isCustomer()
+            && (int) $user->id === (int) $parentOrder->user_id;
+    }
+
     public function delete(User $user, ParentOrder $parentOrder): bool
     {
         return false;

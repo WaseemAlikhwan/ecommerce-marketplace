@@ -45,6 +45,16 @@ class VendorOrderPolicy
             && (int) $user->vendor->id === (int) $vendorOrder->vendor_id;
     }
 
+    /**
+     * CAN-A: vendor may cancel own Vendor Order (eligibility enforced in service).
+     */
+    public function cancel(User $user, VendorOrder $vendorOrder): bool
+    {
+        return $user->canAccessVendorPanel()
+            && $user->vendor !== null
+            && (int) $user->vendor->id === (int) $vendorOrder->vendor_id;
+    }
+
     public function delete(User $user, VendorOrder $vendorOrder): bool
     {
         return false;

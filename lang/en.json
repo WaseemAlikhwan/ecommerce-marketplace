@@ -1012,5 +1012,13 @@
     "Processing": "Processing",
     "Cancelled": "Cancelled",
     "Shipments": "Shipments",
-    "Shipment status": "Shipment status"
+    "Shipment status": "Shipment status",
+    "Order cancelled": "Order cancelled",
+    "Order cancelled.": "Order cancelled.",
+    "Cancel order": "Cancel order",
+    "This order cannot be cancelled.": "This order cannot be cancelled.",
+    "Vendor order cancelled": "Vendor order cancelled",
+    "Your order :code was cancelled.": "Your order :code was cancelled.",
+    "Your vendor shipment :code was cancelled.": "Your vendor shipment :code was cancelled.",
+    "Vendor order :code was cancelled.": "Vendor order :code was cancelled."
 }

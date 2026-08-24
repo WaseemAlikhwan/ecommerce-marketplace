@@ -1012,5 +1012,13 @@
     "Processing": "قيد المعالجة",
     "Cancelled": "ملغى",
     "Shipments": "الشحنات",
-    "Shipment status": "حالة الشحنة"
+    "Shipment status": "حالة الشحنة",
+    "Order cancelled": "تم إلغاء الطلب",
+    "Order cancelled.": "تم إلغاء الطلب.",
+    "Cancel order": "إلغاء الطلب",
+    "This order cannot be cancelled.": "لا يمكن إلغاء هذا الطلب.",
+    "Vendor order cancelled": "تم إلغاء طلب البائع",
+    "Your order :code was cancelled.": "تم إلغاء طلبك :code.",
+    "Your vendor shipment :code was cancelled.": "تم إلغاء شحنة البائع :code.",
+    "Vendor order :code was cancelled.": "تم إلغاء طلب البائع :code."
 }

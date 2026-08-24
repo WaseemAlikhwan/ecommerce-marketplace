@@ -33,14 +33,27 @@
                     </div>
                 </div>
 
-                @if ($canAdvance ?? false)
-                    <form method="POST" action="{{ route('vendor.orders.advance', $order->id) }}" class="mt-6" data-advance-action>
-                        @csrf
-                        <input type="hidden" name="status" value="{{ $nextStatus }}">
-                        <x-ui.button type="submit" variant="primary">
-                            {{ $nextActionLabel }}
-                        </x-ui.button>
-                    </form>
+                @if (($canAdvance ?? false) || ($canCancel ?? false))
+                    <div class="mt-6 flex flex-wrap gap-3">
+                        @if ($canAdvance ?? false)
+                            <form method="POST" action="{{ route('vendor.orders.advance', $order->id) }}" data-advance-action>
+                                @csrf
+                                <input type="hidden" name="status" value="{{ $nextStatus }}">
+                                <x-ui.button type="submit" variant="primary">
+                                    {{ $nextActionLabel }}
+                                </x-ui.button>
+                            </form>
+                        @endif
+
+                        @if ($canCancel ?? false)
+                            <form method="POST" action="{{ route('vendor.orders.cancel', $order->id) }}" data-cancel-action>
+                                @csrf
+                                <x-ui.button type="submit" variant="danger">
+                                    {{ __('Cancel order') }}
+                                </x-ui.button>
+                            </form>
+                        @endif
+                    </div>
                 @endif
 
                 <ul class="mt-6 space-y-3">

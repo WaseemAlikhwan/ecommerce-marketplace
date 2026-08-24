@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Vendor;
 
 use App\Enums\VendorOrderStatus;
+use App\Exceptions\OrderCancellationException;
 use App\Exceptions\VendorOrderLifecycleException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Vendor\AdvanceVendorOrderRequest;
+use App\Http\Requests\Vendor\CancelVendorOrderRequest;
 use App\Models\VendorOrder;
+use App\Services\OrderCancellationService;
 use App\Services\OrderViewService;
 use App\Services\VendorOrderLifecycleService;
 use Illuminate\Http\RedirectResponse;
@@ -18,6 +21,7 @@ final class VendorOrderController extends Controller
     public function __construct(
         private readonly OrderViewService $orderViews,
         private readonly VendorOrderLifecycleService $lifecycle,
+        private readonly OrderCancellationService $cancellations,
     ) {}
 
     public function index(Request $request): View
@@ -62,12 +66,15 @@ final class VendorOrderController extends Controller
         $view = $this->orderViews->vendor($vendorOrder, app()->getLocale());
         $next = $this->lifecycle->nextStatus($vendorOrder->status);
         $canAdvance = $user->can('advance', $vendorOrder) && $next !== null;
+        $canCancel = $user->can('cancel', $vendorOrder)
+            && $this->cancellations->vendorCanCancelVendorOrder($vendorOrder);
 
         return view('vendor.orders.show', [
             'order' => $view,
             'canAdvance' => $canAdvance,
             'nextStatus' => $next?->value,
             'nextActionLabel' => $this->actionLabel($next),
+            'canCancel' => $canCancel,
         ]);
     }
 
@@ -103,6 +110,38 @@ final class VendorOrderController extends Controller
         return redirect()
             ->route('vendor.orders.show', $vendorOrder)
             ->with('status', $this->flashFor($target));
+    }
+
+    public function cancel(
+        CancelVendorOrderRequest $request,
+        VendorOrder $vendorOrder,
+    ): RedirectResponse {
+        $user = $request->user();
+        $user->loadMissing(['roles', 'vendor']);
+        abort_unless($user->canAccessVendorPanel(), 404);
+
+        // Own-vendor only: fail closed as 404 (do not leak existence to other vendors).
+        if ($user->vendor?->id !== $vendorOrder->vendor_id) {
+            abort(404);
+        }
+
+        try {
+            $this->cancellations->cancelVendorOrderByVendor($user, $vendorOrder);
+        } catch (OrderCancellationException $e) {
+            if ($e->errorCode === OrderCancellationException::UNAUTHORIZED) {
+                abort(404);
+            }
+
+            return redirect()
+                ->route('vendor.orders.show', $vendorOrder)
+                ->withErrors([
+                    'cancel' => __('This order cannot be cancelled.'),
+                ]);
+        }
+
+        return redirect()
+            ->route('vendor.orders.show', $vendorOrder)
+            ->with('status', __('Order cancelled.'));
     }
 
     private function actionLabel(?VendorOrderStatus $next): ?string

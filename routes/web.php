@@ -75,6 +75,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/account/orders', [ParentOrderController::class, 'index'])->name('account.orders');
     Route::get('/account/orders/{parentOrder}', [ParentOrderController::class, 'show'])->name('account.orders.show');
+    Route::post('/account/orders/{parentOrder}/cancel', [ParentOrderController::class, 'cancel'])->name('account.orders.cancel');
     Route::view('/account/wishlist', 'account.wishlist')->name('account.wishlist');
     Route::view('/account/addresses', 'account.addresses')->name('account.addresses');
     Route::get('/account/vendor-application', [VendorApplicationController::class, 'show'])->name('account.vendor-application');
@@ -140,6 +141,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/orders', [VendorOrderController::class, 'index'])->name('orders');
         Route::get('/orders/{vendorOrder}', [VendorOrderController::class, 'show'])->name('orders.show');
         Route::post('/orders/{vendorOrder}/advance', [VendorOrderController::class, 'advance'])->name('orders.advance');
+        Route::post('/orders/{vendorOrder}/cancel', [VendorOrderController::class, 'cancel'])->name('orders.cancel');
     });
 });
 

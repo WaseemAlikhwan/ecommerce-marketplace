@@ -10,6 +10,7 @@ Large implementation prompts are stored here once and executed as small slices.
 | `checkout-readiness.md` | READY — CHK-0 approved 2026-08-23 |
 | `checkout-chk.md` | **DONE** — CHK-0…CHK-E accepted (2026-08-24); focused **24 / 252**; full Docker **393 / 3044** |
 | `vendor-order-lifecycle-vol.md` | **DONE** — VOL-A…C accepted (2026-08-24); focused **10 / 104**; AR/EN **990 / 990**; smoke leftovers **0** |
+| `order-cancellation-can.md` | **DONE** — CAN-A…D accepted (2026-08-24); focused **14 / 143**; AR/EN **998 / 998**; smoke leftovers **0** |
 | `storefront-s8c-recovery.md` | DONE — S8C accepted |
 
 ## Rules
@@ -22,9 +23,9 @@ Large implementation prompts are stored here once and executed as small slices.
 6. Mark interrupted work `IN PROGRESS`; never document it as complete.
 7. Archive or delete a task file after its final gate is accepted.
 8. Do not implement Checkout until `checkout-chk.md` is READY and a named CHK-* slice is requested.
-9. Do not start Wishlist from Checkout or VOL tasks.
+9. Do not start Wishlist from Checkout, VOL, or CAN tasks.
 10. Do not implement Vendor Order lifecycle until `vendor-order-lifecycle-vol.md` is READY and a named VOL-* slice is requested.
-11. Do not implement cancellations from VOL (OPEN-010 remains PENDING).
+11. Do not implement cancellations from VOL. Implement cancellations only from `order-cancellation-can.md` when READY and a named CAN-* slice is requested.
 
 ## Short Prompt Template
 

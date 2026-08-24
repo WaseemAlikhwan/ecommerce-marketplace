@@ -137,7 +137,9 @@ This plan is incremental. Each phase produces a demonstrable, testable slice. La
 
 **Checkout CHK (ADR-042) implemented (2026-08-24):** Multi-vendor COD place-order via `CheckoutService` with stock `lockForUpdate` decrement; flat per-VO shipping; one COD Payment per Vendor Order; Parent address snapshot; `PO-…` / `VO-…` codes; commission snapshot at placement; Syria geo + customer addresses; mail+database placement notifications; customer Parent Order and vendor Vendor Order UIs. Final gate: focused Checkout **24 / 252**; full Docker PHPUnit **393 / 3044**; Pint (Checkout-scoped) pass; `view:cache` pass; `npm run build` pass; AR/EN **960/960**; forbidden-ref pass; HTTP smoke login→cart→COD→order views with leftovers **0**. Coupons, Wishlist, Reviews, cancellations, and card charge remain out of Phase 7.
 
-**Vendor Order lifecycle VOL (ADR-042) implemented (2026-08-24):** Vendor-only forward VO transitions `pending→confirmed→shipped→delivered` with commission recognition on `delivered`, mail+database status notifications, vendor panel advance actions, and customer Parent Order show/index live VO status labels (Parent stays `placed`; COD Payment status and cancellations out of VOL). Final gate: focused VOL **10 / 104**; Pint (VOL-scoped) pass; `view:cache` pass; AR/EN **990 / 990**; forbidden-ref pass; smoke vendor advances VO → customer sees status with leftovers **0**. OPEN-010 cancellations, Wishlist, Coupons, and Reviews remain out of Phase 7.
+**Vendor Order lifecycle VOL (ADR-042) implemented (2026-08-24):** Vendor-only forward VO transitions `pending→confirmed→shipped→delivered` with commission recognition on `delivered`, mail+database status notifications, vendor panel advance actions, and customer Parent Order show/index live VO status labels (Parent stays `placed`; COD Payment status and cancellations out of VOL). Final gate: focused VOL **10 / 104**; Pint (VOL-scoped) pass; `view:cache` pass; AR/EN **990 / 990**; forbidden-ref pass; smoke vendor advances VO → customer sees status with leftovers **0**. Wishlist, Coupons, and Reviews remain out of Phase 7.
+
+**Order Cancellation CAN (OPEN-010 V1) implemented (2026-08-24):** Domain cancel service + vendor VO cancel UI + customer Parent cancel UI enforcing the V1 matrix (customer: all-VO-pending Parent cancel; vendor: own VO pending/confirmed; stock restore; COD Payment→cancelled; notifications; fail-closed 404). Final gate: focused CAN **14 / 143**; Pint (CAN-scoped) pass; `view:cache` pass; AR/EN **998 / 998**; forbidden-ref pass; smoke vendor cancel VO + customer cancel Parent with leftovers **0**. Admin cancel, post-ship returns, COD `collected`, Parent auto-derivation, Wishlist/Coupons/Reviews remain out of this Phase 7 remainder.
 
 ---
 
@@ -162,6 +164,8 @@ This plan is incremental. Each phase produces a demonstrable, testable slice. La
 | **Dependencies** | Phase 7; review/cancel OPEN DECISIONS. |
 | **Expected output** | Delivered order enables review; cancellations reverse stock. |
 | **Testing requirements** | Review eligibility tests; cancellation matrix tests; rating aggregate tests. |
+
+**Note (2026-08-24):** OPEN-010 **V1** cancel matrix is already implemented via Order Cancellation CAN (Phase 7 remainder) — customer Parent cancel (all-VO-pending) + vendor VO cancel (pending/confirmed) + stock restore + COD Payment→cancelled. Phase 9 still owns reviews/ratings, admin cancel, post-ship returns/refunds, coupon release, settlement ledger, and any Parent auto-derivation product beyond CAN’s narrow cancel-side coherence.
 
 ---
 

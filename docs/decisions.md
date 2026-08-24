@@ -776,11 +776,13 @@ S8B wired these scopes into every public Storefront catalog route and removed th
 
 **Closes:** OPEN-005 (checkout place/charge currency for V1), OPEN-006, OPEN-011, OPEN-012, OPEN-021; related BR-CHK / BR-PAY / BR-SHP / BR-COM / BR-CUR / BR-INV / BR-GEO RULE rows synced in CHK-0.  
 **Narrows:** OPEN-013 to mail+DB minimum for Checkout; SMS later.  
-**Does not close:** OPEN-007 coupons; OPEN-008/009 reviews; OPEN-010 cancellation; OPEN-018 Wishlist.  
+**Does not close:** OPEN-007 coupons; OPEN-008/009 reviews; OPEN-018 Wishlist.  
+**OPEN-010 V1:** Closed by Order Cancellation CAN (CAN-A…D) accepted 2026-08-24 — focused **14 / 143**; AR/EN **998 / 998**; smoke leftovers **0**. V1 matrix only (customer Parent all-pending; vendor VO pending/confirmed; stock restore; COD Payment→cancelled; no admin/returns/`collected`/Parent derivation engine).  
 
 **Source:** Checkout CHK-0 approval; readiness `docs/tasks/checkout-readiness.md`; execution `docs/tasks/checkout-chk.md`.  
 **Implemented:** Checkout CHK (CHK-A…CHK-E) accepted 2026-08-24 — final gate focused **24 / 252**, full Docker PHPUnit **393 / 3044**.  
-**Lifecycle (VOL) implemented:** Vendor Order fulfillment transitions + customer visibility (VOL-A…C) accepted 2026-08-24 — focused **10 / 104**; AR/EN **990 / 990**; smoke leftovers **0**. Parent derivation, COD `collected`, and OPEN-010 cancellations remain out of VOL.
+**Lifecycle (VOL) implemented:** Vendor Order fulfillment transitions + customer visibility (VOL-A…C) accepted 2026-08-24 — focused **10 / 104**; AR/EN **990 / 990**; smoke leftovers **0**. Parent derivation and COD `collected` remain out of VOL.  
+**Cancellations (CAN) implemented:** OPEN-010 V1 cancel matrix via `docs/tasks/order-cancellation-can.md` (CAN-A…D) accepted 2026-08-24 — focused **14 / 143**; Pint (CAN-scoped) pass; `view:cache` pass; AR/EN **998 / 998**; forbidden-ref pass; smoke vendor+customer cancel with leftovers **0**.
 
 ---
 
@@ -827,8 +829,10 @@ S8B wired these scopes into every public Storefront catalog route and removed th
 
 ### OPEN-010 — Cancellation matrix
 
-**Questions:** Who can cancel what, until which status? Can one Vendor Order be cancelled independently?  
-**Must decide before Phase 9 (and ideally before Phase 7 UI copy).
+**Status:** V1 closed by CAN (2026-08-24) — see `docs/tasks/order-cancellation-can.md`  
+**V1 rule (implemented):** Customer may cancel Parent only while every VO is `pending` (all-or-nothing). Vendor may cancel own VO while `pending` or `confirmed` (before `shipped`). On cancel: restore stock; set COD Payment to `cancelled` (never mutate `collected`); notify customer + affected vendor(s). Parent coherence is cancel-side only (no BR-VO-05 derivation engine; no `partial` Parent).  
+**Still out of V1 / Phase 9 remainder:** Admin cancel UI; post-ship/deliver returns & refunds; coupon release; settlement/refund ledger; Parent auto-derivation product.  
+**Gate:** Focused CAN **14 / 143**; AR/EN **998 / 998**; smoke leftovers **0**.
 
 ### OPEN-011 — Payment record granularity for COD
 

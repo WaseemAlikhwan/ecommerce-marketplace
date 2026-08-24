@@ -137,6 +137,8 @@ This plan is incremental. Each phase produces a demonstrable, testable slice. La
 
 **Checkout CHK (ADR-042) implemented (2026-08-24):** Multi-vendor COD place-order via `CheckoutService` with stock `lockForUpdate` decrement; flat per-VO shipping; one COD Payment per Vendor Order; Parent address snapshot; `PO-…` / `VO-…` codes; commission snapshot at placement; Syria geo + customer addresses; mail+database placement notifications; customer Parent Order and vendor Vendor Order UIs. Final gate: focused Checkout **24 / 252**; full Docker PHPUnit **393 / 3044**; Pint (Checkout-scoped) pass; `view:cache` pass; `npm run build` pass; AR/EN **960/960**; forbidden-ref pass; HTTP smoke login→cart→COD→order views with leftovers **0**. Coupons, Wishlist, Reviews, cancellations, and card charge remain out of Phase 7.
 
+**Vendor Order lifecycle VOL (ADR-042) implemented (2026-08-24):** Vendor-only forward VO transitions `pending→confirmed→shipped→delivered` with commission recognition on `delivered`, mail+database status notifications, vendor panel advance actions, and customer Parent Order show/index live VO status labels (Parent stays `placed`; COD Payment status and cancellations out of VOL). Final gate: focused VOL **10 / 104**; Pint (VOL-scoped) pass; `view:cache` pass; AR/EN **990 / 990**; forbidden-ref pass; smoke vendor advances VO → customer sees status with leftovers **0**. OPEN-010 cancellations, Wishlist, Coupons, and Reviews remain out of Phase 7.
+
 ---
 
 ## Phase 8 — Commissions & Coupons

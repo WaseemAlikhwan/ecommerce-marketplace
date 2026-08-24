@@ -35,6 +35,16 @@ class VendorOrderPolicy
         return false;
     }
 
+    /**
+     * VOL-A: vendor may advance fulfillment on own Vendor Order only.
+     */
+    public function advance(User $user, VendorOrder $vendorOrder): bool
+    {
+        return $user->canAccessVendorPanel()
+            && $user->vendor !== null
+            && (int) $user->vendor->id === (int) $vendorOrder->vendor_id;
+    }
+
     public function delete(User $user, VendorOrder $vendorOrder): bool
     {
         return false;

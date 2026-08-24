@@ -27,7 +27,8 @@
                             <h2 class="mt-1 font-display text-heading-3">{{ $vendorOrder['store_name'] }}</h2>
                         </div>
                         <div class="text-end text-sm">
-                            <p>{{ $vendorOrder['status'] }}</p>
+                            <p class="text-[11px] uppercase tracking-[0.14em] text-ink-muted">{{ __('Shipment status') }}</p>
+                            <p class="mt-1" data-vendor-shipment-status>{{ $vendorOrder['status'] }}</p>
                             <p class="mt-1 text-ink-muted">{{ $vendorOrder['payment_status'] }}</p>
                         </div>
                     </div>

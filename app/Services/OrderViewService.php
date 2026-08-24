@@ -117,7 +117,7 @@ class OrderViewService
 
     /**
      * @param  Collection<int, ParentOrder>  $orders
-     * @return list<array{id: int, public_code: string, status: string, placed_at_label: string, vendor_count: int, cod_dues: list<string>}>
+     * @return list<array{id: int, public_code: string, status: string, placed_at_label: string, vendor_count: int, vendor_statuses: list<array{public_code: string, store_name: string, status: string}>, cod_dues: list<string>}>
      */
     public function parentIndexRows(Collection $orders, ?string $locale = null): array
     {
@@ -135,10 +135,16 @@ class OrderViewService
         return $orders->map(function (ParentOrder $order) use ($exponents): array {
             /** @var array<string, int> $dues */
             $dues = [];
-            foreach ($order->vendorOrders as $vendorOrder) {
+            $vendorStatuses = [];
+            foreach ($order->vendorOrders->sortBy('id') as $vendorOrder) {
                 $code = (string) $vendorOrder->currency_code;
                 $minor = (int) ($vendorOrder->payment?->amount_minor ?? $vendorOrder->grand_total_amount_minor);
                 $dues[$code] = ($dues[$code] ?? 0) + $minor;
+                $vendorStatuses[] = [
+                    'public_code' => (string) $vendorOrder->public_code,
+                    'store_name' => (string) $vendorOrder->store_name,
+                    'status' => $this->vendorStatusLabel($vendorOrder),
+                ];
             }
             ksort($dues);
             $labels = [];
@@ -152,6 +158,7 @@ class OrderViewService
                 'status' => $this->parentStatusLabel($order),
                 'placed_at_label' => $order->placed_at?->timezone(config('app.timezone'))->format('Y-m-d H:i') ?? '—',
                 'vendor_count' => $order->vendorOrders->count(),
+                'vendor_statuses' => $vendorStatuses,
                 'cod_dues' => $labels,
             ];
         })->values()->all();

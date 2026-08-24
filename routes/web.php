@@ -139,6 +139,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/products/{product}/images/{product_image}', [VendorProductImageController::class, 'destroy'])->name('products.images.destroy');
         Route::get('/orders', [VendorOrderController::class, 'index'])->name('orders');
         Route::get('/orders/{vendorOrder}', [VendorOrderController::class, 'show'])->name('orders.show');
+        Route::post('/orders/{vendorOrder}/advance', [VendorOrderController::class, 'advance'])->name('orders.advance');
     });
 });
 

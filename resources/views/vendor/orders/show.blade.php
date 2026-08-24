@@ -11,6 +11,14 @@
         </x-slot:breadcrumb>
     </x-ui.page-header>
 
+    @if (session('status'))
+        <x-ui.alert tone="success" class="mb-6">{{ session('status') }}</x-ui.alert>
+    @endif
+
+    @if ($errors->any())
+        <x-ui.alert tone="danger" class="mb-6">{{ $errors->first() }}</x-ui.alert>
+    @endif
+
     <div class="grid gap-8 lg:grid-cols-12">
         <div class="space-y-8 lg:col-span-8">
             <section class="border border-line bg-surface p-6">
@@ -24,6 +32,16 @@
                         <p class="mt-1 text-ink-muted">{{ $order->paymentStatus }}</p>
                     </div>
                 </div>
+
+                @if ($canAdvance ?? false)
+                    <form method="POST" action="{{ route('vendor.orders.advance', $order->id) }}" class="mt-6" data-advance-action>
+                        @csrf
+                        <input type="hidden" name="status" value="{{ $nextStatus }}">
+                        <x-ui.button type="submit" variant="primary">
+                            {{ $nextActionLabel }}
+                        </x-ui.button>
+                    </form>
+                @endif
 
                 <ul class="mt-6 space-y-3">
                     @foreach ($order->items as $item)

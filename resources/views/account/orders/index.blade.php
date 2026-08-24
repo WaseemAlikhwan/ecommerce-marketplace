@@ -19,7 +19,7 @@
                         <th scope="col">{{ __('Order') }}</th>
                         <th scope="col">{{ __('Placed') }}</th>
                         <th scope="col">{{ __('Status') }}</th>
-                        <th scope="col">{{ __('Vendors') }}</th>
+                        <th scope="col">{{ __('Shipments') }}</th>
                         <th scope="col">{{ __('COD dues') }}</th>
                         <th scope="col"><span class="sr-only">{{ __('Actions') }}</span></th>
                     </tr>
@@ -30,7 +30,16 @@
                             <td class="font-medium">{{ $row['public_code'] }}</td>
                             <td>{{ $row['placed_at_label'] }}</td>
                             <td>{{ $row['status'] }}</td>
-                            <td>{{ $row['vendor_count'] }}</td>
+                            <td>
+                                <ul class="space-y-1 text-sm" data-vendor-shipments>
+                                    @foreach ($row['vendor_statuses'] as $shipment)
+                                        <li data-vendor-shipment-status>
+                                            <span class="text-ink-muted">{{ $shipment['public_code'] }}</span>
+                                            · {{ $shipment['status'] }}
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </td>
                             <td>
                                 <ul class="space-y-1">
                                     @foreach ($row['cod_dues'] as $due)

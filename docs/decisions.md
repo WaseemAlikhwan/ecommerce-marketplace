@@ -779,7 +779,8 @@ S8B wired these scopes into every public Storefront catalog route and removed th
 **Does not close:** OPEN-007 coupons; OPEN-008/009 reviews; OPEN-010 cancellation; OPEN-018 Wishlist.  
 
 **Source:** Checkout CHK-0 approval; readiness `docs/tasks/checkout-readiness.md`; execution `docs/tasks/checkout-chk.md`.  
-**Implemented:** Checkout CHK (CHK-A…CHK-E) accepted 2026-08-24 — final gate focused **24 / 252**, full Docker PHPUnit **393 / 3044**.
+**Implemented:** Checkout CHK (CHK-A…CHK-E) accepted 2026-08-24 — final gate focused **24 / 252**, full Docker PHPUnit **393 / 3044**.  
+**Lifecycle (VOL) implemented:** Vendor Order fulfillment transitions + customer visibility (VOL-A…C) accepted 2026-08-24 — focused **10 / 104**; AR/EN **990 / 990**; smoke leftovers **0**. Parent derivation, COD `collected`, and OPEN-010 cancellations remain out of VOL.
 
 ---
 

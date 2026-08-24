@@ -356,7 +356,7 @@ P0 items resolved in `docs/p0-decisions.md` (approved 2026-08-11) are **removed*
 | Vendor application re-apply / required fields | BR-APP-07, BR-APP-10 |
 | Exact media limits | **Closed** → ADR-038 / BR-MED-03 |
 | Admin permission catalog | BR-PERM-07 |
-| Wishlist target | Product vs variant (OPEN-018) |
+| Wishlist target | Product (OPEN-018 V1 closed by WSH) |
 
 ---
 

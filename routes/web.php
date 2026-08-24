@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Account\ParentOrderController;
 use App\Http\Controllers\Account\VendorApplicationController;
+use App\Http\Controllers\Account\WishlistController;
 use App\Http\Controllers\Admin\AttributeController as AdminAttributeController;
 use App\Http\Controllers\Admin\AttributeValueController as AdminAttributeValueController;
 use App\Http\Controllers\Admin\BrandController as AdminBrandController;
@@ -76,7 +77,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/account/orders', [ParentOrderController::class, 'index'])->name('account.orders');
     Route::get('/account/orders/{parentOrder}', [ParentOrderController::class, 'show'])->name('account.orders.show');
     Route::post('/account/orders/{parentOrder}/cancel', [ParentOrderController::class, 'cancel'])->name('account.orders.cancel');
-    Route::view('/account/wishlist', 'account.wishlist')->name('account.wishlist');
+    Route::get('/account/wishlist', [WishlistController::class, 'index'])->name('account.wishlist');
+    Route::post('/account/wishlist/{product}', [WishlistController::class, 'store'])
+        ->whereNumber('product')
+        ->name('account.wishlist.store');
+    Route::delete('/account/wishlist/{wishlistItem}', [WishlistController::class, 'destroy'])
+        ->whereNumber('wishlistItem')
+        ->name('account.wishlist.destroy');
     Route::view('/account/addresses', 'account.addresses')->name('account.addresses');
     Route::get('/account/vendor-application', [VendorApplicationController::class, 'show'])->name('account.vendor-application');
     Route::post('/account/vendor-application', [VendorApplicationController::class, 'store'])->name('account.vendor-application.store');

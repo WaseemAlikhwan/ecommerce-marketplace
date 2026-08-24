@@ -319,8 +319,8 @@ Legend:
 | ID | Type | Rule |
 |----|------|------|
 | BR-WSH-01 | RULE | Authenticated customers can add/remove products. |
-| BR-WSH-02 | RULE | Wishlist items are unique per customer+product (or product variant — OPEN DECISION). |
-| BR-WSH-03 | OPEN DECISION | Wishlist stores product only or specific variant? |
+| BR-WSH-02 | RULE | Wishlist items are unique per customer+product (V1; not variant — OPEN-018 closed by WSH). |
+| BR-WSH-03 | RULE | V1 wishlist stores **product only** (not a specific variant). Closed by WSH / OPEN-018 (2026-08-24). |
 
 ---
 
@@ -398,7 +398,7 @@ Remaining (post-purchase / Phase 8–10; do not invent):
 3. Review uniqueness (OPEN-009)  
 4. Cancellation matrix (OPEN-010)  
 5. Notification channels beyond Checkout V1 mail + database minimum (OPEN-013 remainder; SMS later)  
-6. Wishlist product vs variant (OPEN-018)  
+6. ~~Wishlist product vs variant (OPEN-018)~~ — **V1 closed by WSH** (product-level; 2026-08-24)  
 7. In-flight orders on vendor suspend (OPEN-017)  
 8. Admin KPI/report set (OPEN-020); BR-PAY-05 / BR-SHP-06 operational collector/shipper; BR-CUR-08 display preference; BR-GEO-03 area level; BR-VO-04/05 full status matrices; application re-apply/fields; admin permission catalog  
 

@@ -151,6 +151,21 @@
                     </div>
                 @endif
 
+                <div class="mt-6">
+                    @if ($wishlistItemId)
+                        <form method="post" action="{{ route('account.wishlist.destroy', $wishlistItemId) }}">
+                            @csrf
+                            @method('DELETE')
+                            <x-ui.button type="submit" variant="secondary">{{ __('Remove from wishlist') }}</x-ui.button>
+                        </form>
+                    @else
+                        <form method="post" action="{{ route('account.wishlist.store', $product['id']) }}">
+                            @csrf
+                            <x-ui.button type="submit" variant="secondary">{{ __('Add to wishlist') }}</x-ui.button>
+                        </form>
+                    @endif
+                </div>
+
                 @if ($product['short_description'])
                     <p class="mt-6 max-w-md text-sm leading-relaxed text-ink-muted" dir="auto">{{ $product['short_description'] }}</p>
                 @endif

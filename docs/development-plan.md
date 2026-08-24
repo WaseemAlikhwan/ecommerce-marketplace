@@ -117,11 +117,13 @@ This plan is incremental. Each phase produces a demonstrable, testable slice. La
 |-------|---------|
 | **Objective** | Customer discovery and pre-purchase flows. |
 | **Features** | Product listing/search/filter/sort (MySQL); cart add/update/remove (multi-vendor) including **guest cart**; wishlist add/remove; price display rules; checkout redirect to auth for guests (ADR-019). Cart lines use **`variant_id`** only (ADR-029). |
-| **Dependencies** | Phase 5; ADR-019; **ADR-041** (session guest cart, DB auth cart, merge-by-variant with stock cap + report, mixed-currency cart totals without conversion). Wishlist target still OPEN-018. Checkout FX/charge currency still OPEN-005. |
+| **Dependencies** | Phase 5; ADR-019; **ADR-041** (session guest cart, DB auth cart, merge-by-variant with stock cap + report, mixed-currency cart totals without conversion). **Wishlist V1 product target closed by WSH / OPEN-018.** Checkout FX/charge currency still OPEN-005. |
 | **Expected output** | Customer can find products and build a multi-vendor cart. |
 | **Testing requirements** | Search filter feature tests; cart quantity vs stock checks; wishlist uniqueness. |
 
 **Cart Slice C1 implemented (2026-08-23):** ADR-041 executed via `docs/tasks/cart-c1.md` (C1-A…C1-D3). Guest session cart + authenticated DB cart; login/register merge by `variant_id` with stock cap + flash report; query-free per-currency cart subtotals (no FX); storefront HTTP mutations + Blade cart UI. Final gate: focused Cart **42 / 437**; full Docker PHPUnit **369 / 2791**; Pint (Cart-scoped) pass; `view:cache` pass; `npm run build` pass; AR/EN **908/908**; forbidden-ref pass; HTTP smoke guest→register merge→mixed SYP/USD subtotals with leftovers **0**. Checkout, inventory decrement/reserve, and Wishlist remain out of C1.
+
+**Wishlist WSH (OPEN-018 V1) implemented (2026-08-24):** Product-level wishlist (`product_id`, not variant) for authenticated customers; unique `(user_id, product_id)`; storefront-visible add gate; account list via catalog-safe cards; PDP add/remove; fail-closed ownership (stranger → 404); no guest wishlist, convert-to-cart, Coupons, Reviews, Checkout changes, or Redis. Final gate: focused WSH **17 / 136**; Pint (WSH-scoped) pass; `view:cache` pass; AR/EN **1003 / 1003**; forbidden-ref pass; smoke login→PDP add→account list→remove with leftovers **0**.
 
 ---
 

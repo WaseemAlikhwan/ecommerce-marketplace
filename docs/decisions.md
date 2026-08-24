@@ -776,13 +776,15 @@ S8B wired these scopes into every public Storefront catalog route and removed th
 
 **Closes:** OPEN-005 (checkout place/charge currency for V1), OPEN-006, OPEN-011, OPEN-012, OPEN-021; related BR-CHK / BR-PAY / BR-SHP / BR-COM / BR-CUR / BR-INV / BR-GEO RULE rows synced in CHK-0.  
 **Narrows:** OPEN-013 to mail+DB minimum for Checkout; SMS later.  
-**Does not close:** OPEN-007 coupons; OPEN-008/009 reviews; OPEN-018 Wishlist.  
+**Does not close:** OPEN-007 coupons; OPEN-008/009 reviews.  
 **OPEN-010 V1:** Closed by Order Cancellation CAN (CAN-A…D) accepted 2026-08-24 — focused **14 / 143**; AR/EN **998 / 998**; smoke leftovers **0**. V1 matrix only (customer Parent all-pending; vendor VO pending/confirmed; stock restore; COD Payment→cancelled; no admin/returns/`collected`/Parent derivation engine).  
+**OPEN-018 V1:** Closed by Wishlist WSH (WSH-A…C) accepted 2026-08-24 — focused **17 / 136**; AR/EN **1003 / 1003**; smoke leftovers **0**. Product-level wishlist only (no guest wishlist, convert-to-cart, Coupons, Reviews).  
 
 **Source:** Checkout CHK-0 approval; readiness `docs/tasks/checkout-readiness.md`; execution `docs/tasks/checkout-chk.md`.  
 **Implemented:** Checkout CHK (CHK-A…CHK-E) accepted 2026-08-24 — final gate focused **24 / 252**, full Docker PHPUnit **393 / 3044**.  
 **Lifecycle (VOL) implemented:** Vendor Order fulfillment transitions + customer visibility (VOL-A…C) accepted 2026-08-24 — focused **10 / 104**; AR/EN **990 / 990**; smoke leftovers **0**. Parent derivation and COD `collected` remain out of VOL.  
-**Cancellations (CAN) implemented:** OPEN-010 V1 cancel matrix via `docs/tasks/order-cancellation-can.md` (CAN-A…D) accepted 2026-08-24 — focused **14 / 143**; Pint (CAN-scoped) pass; `view:cache` pass; AR/EN **998 / 998**; forbidden-ref pass; smoke vendor+customer cancel with leftovers **0**.
+**Cancellations (CAN) implemented:** OPEN-010 V1 cancel matrix via `docs/tasks/order-cancellation-can.md` (CAN-A…D) accepted 2026-08-24 — focused **14 / 143**; Pint (CAN-scoped) pass; `view:cache` pass; AR/EN **998 / 998**; forbidden-ref pass; smoke vendor+customer cancel with leftovers **0**.  
+**Wishlist (WSH) implemented:** OPEN-018 V1 product wishlist via `docs/tasks/wishlist-wsh.md` (WSH-A…C) accepted 2026-08-24 — focused **17 / 136**; Pint (WSH-scoped) pass; `view:cache` pass; AR/EN **1003 / 1003**; forbidden-ref pass; smoke login→add→list→remove with leftovers **0**.
 
 ---
 
@@ -866,7 +868,10 @@ S8B wired these scopes into every public Storefront catalog route and removed th
 
 ### OPEN-018 — Wishlist targets product vs variant
 
-**Recommendation:** Product-level wishlist for V1.
+**Status:** V1 closed by WSH (2026-08-24) — see `docs/tasks/wishlist-wsh.md`  
+**V1 rule (implemented):** Wishlist targets **Product** (`product_id`) only — not Variant. Authenticated customers only; unique `(user_id, product_id)`; add/remove + account list; storefront-visible gate on add; list omits non-visible; fail-closed ownership (stranger → 404); no public SKU / exact inventory quantity on wishlist UI.  
+**Still out of V1:** Guest/session wishlist; convert-to-cart; variant-targeted wishlist; sharing; price alerts; admin wishlist UI; Redis.  
+**Gate:** Focused WSH **17 / 136**; AR/EN **1003 / 1003**; smoke leftovers **0**.
 
 ### OPEN-019 — SKU uniqueness scope
 

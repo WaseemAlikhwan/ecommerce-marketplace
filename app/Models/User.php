@@ -57,6 +57,11 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
         return $this->hasMany(ParentOrder::class);
     }
 
+    public function wishlistItems(): HasMany
+    {
+        return $this->hasMany(WishlistItem::class);
+    }
+
     public function vendorApplications(): HasMany
     {
         return $this->hasMany(VendorApplication::class);

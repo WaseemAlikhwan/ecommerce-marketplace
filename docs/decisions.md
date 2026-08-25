@@ -776,7 +776,8 @@ S8B wired these scopes into every public Storefront catalog route and removed th
 
 **Closes:** OPEN-005 (checkout place/charge currency for V1), OPEN-006, OPEN-011, OPEN-012, OPEN-021; related BR-CHK / BR-PAY / BR-SHP / BR-COM / BR-CUR / BR-INV / BR-GEO RULE rows synced in CHK-0.  
 **Narrows:** OPEN-013 to mail+DB minimum for Checkout; SMS later.  
-**Does not close:** OPEN-007 coupons; OPEN-008/009 reviews.  
+**Does not close:** OPEN-007 coupons.  
+**OPEN-008 / OPEN-009 V1:** Closed by Reviews REV (REV-A…D) accepted 2026-08-25 — focused **20 / 257**; AR/EN **1035 / 1035**; smoke leftovers **0**. Delivered-VO eligibility + one review per customer+product; admin moderation; no store rating / vendor replies / Coupons / Redis.  
 **OPEN-010 V1:** Closed by Order Cancellation CAN (CAN-A…D) accepted 2026-08-24 — focused **14 / 143**; AR/EN **998 / 998**; smoke leftovers **0**. V1 matrix only (customer Parent all-pending; vendor VO pending/confirmed; stock restore; COD Payment→cancelled; no admin/returns/`collected`/Parent derivation engine).  
 **OPEN-018 V1:** Closed by Wishlist WSH (WSH-A…C) accepted 2026-08-24 — focused **17 / 136**; AR/EN **1003 / 1003**; smoke leftovers **0**. Product-level wishlist only (no guest wishlist, convert-to-cart, Coupons, Reviews).  
 
@@ -784,7 +785,8 @@ S8B wired these scopes into every public Storefront catalog route and removed th
 **Implemented:** Checkout CHK (CHK-A…CHK-E) accepted 2026-08-24 — final gate focused **24 / 252**, full Docker PHPUnit **393 / 3044**.  
 **Lifecycle (VOL) implemented:** Vendor Order fulfillment transitions + customer visibility (VOL-A…C) accepted 2026-08-24 — focused **10 / 104**; AR/EN **990 / 990**; smoke leftovers **0**. Parent derivation and COD `collected` remain out of VOL.  
 **Cancellations (CAN) implemented:** OPEN-010 V1 cancel matrix via `docs/tasks/order-cancellation-can.md` (CAN-A…D) accepted 2026-08-24 — focused **14 / 143**; Pint (CAN-scoped) pass; `view:cache` pass; AR/EN **998 / 998**; forbidden-ref pass; smoke vendor+customer cancel with leftovers **0**.  
-**Wishlist (WSH) implemented:** OPEN-018 V1 product wishlist via `docs/tasks/wishlist-wsh.md` (WSH-A…C) accepted 2026-08-24 — focused **17 / 136**; Pint (WSH-scoped) pass; `view:cache` pass; AR/EN **1003 / 1003**; forbidden-ref pass; smoke login→add→list→remove with leftovers **0**.
+**Wishlist (WSH) implemented:** OPEN-018 V1 product wishlist via `docs/tasks/wishlist-wsh.md` (WSH-A…C) accepted 2026-08-24 — focused **17 / 136**; Pint (WSH-scoped) pass; `view:cache` pass; AR/EN **1003 / 1003**; forbidden-ref pass; smoke login→add→list→remove with leftovers **0**.  
+**Reviews (REV) implemented:** OPEN-008 / OPEN-009 V1 product reviews via `docs/tasks/reviews-rev.md` (REV-A…D) accepted 2026-08-25 — focused **20 / 257**; Pint (REV-scoped) pass; `view:cache` pass; AR/EN **1035 / 1035**; forbidden-ref pass; smoke delivered→submit→approve→PDP with leftovers **0**.
 
 ---
 
@@ -821,13 +823,17 @@ S8B wired these scopes into every public Storefront catalog route and removed th
 
 ### OPEN-008 — Review eligibility
 
-**Question:** Is delivered mandatory for V1, or is purchased enough?  
-**Recommendation:** Require delivered for higher review quality.
+**Status:** V1 closed by REV (2026-08-25) — see `docs/tasks/reviews-rev.md`  
+**V1 rule (implemented):** Customer may review a Product only after purchasing it on a Vendor Order that reached **`delivered`**. Purchased-but-not-delivered is not enough.  
+**Still out of V1:** Guest reviews; store-level rating (BR-STR-06); vendor replies (BR-REV-06); Coupons; Redis.  
+**Gate:** Focused REV **20 / 257**; AR/EN **1035 / 1035**; smoke leftovers **0**.
 
 ### OPEN-009 — Review uniqueness
 
-**Question:** One review per customer per product, or per order?  
-**Recommendation:** One per customer per product for V1 simplicity.
+**Status:** V1 closed by REV (2026-08-25) — see `docs/tasks/reviews-rev.md`  
+**V1 rule (implemented):** **One review per customer per product** — unique `(user_id, product_id)`. Not per order. Edit/resubmit returns the row to `pending` for re-moderation.  
+**Still out of V1:** Per-order uniqueness; guest reviews; vendor replies; store rating writes.  
+**Gate:** Focused REV **20 / 257**; AR/EN **1035 / 1035**; smoke leftovers **0**.
 
 ### OPEN-010 — Cancellation matrix
 
@@ -899,7 +905,7 @@ S8B wired these scopes into every public Storefront catalog route and removed th
 | Brand ownership OPEN | Admin vs vendor brands | **Resolved** ADR-024 |
 | Publishing moderation OPEN | Self-publish vs queue | **Resolved** ADR-027 |
 | SKU uniqueness OPEN | Global vs per vendor/store | **Resolved** ADR-031 |
-| Reviews after purchase **and preferably** after delivery | Preference vs hard gate | OPEN-008 |
+| Reviews after purchase **and preferably** after delivery | Preference vs hard gate | **Resolved** OPEN-008 by REV — delivered VO required for V1 |
 | Coupons feature-rich vs “do not over-engineer” | Wide coupon matrix | Implement core fields; strict stacking (OPEN-007) |
 | Multi-currency products + single COD collection | Charge currency unclear | **Resolved** ADR-042 (place without FX; per-currency COD dues) |
 | Commission configurable + COD cash flow | When commission is “earned” unclear | **Resolved** ADR-042 |

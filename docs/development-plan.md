@@ -169,6 +169,8 @@ This plan is incremental. Each phase produces a demonstrable, testable slice. La
 
 **Note (2026-08-24):** OPEN-010 **V1** cancel matrix is already implemented via Order Cancellation CAN (Phase 7 remainder) — customer Parent cancel (all-VO-pending) + vendor VO cancel (pending/confirmed) + stock restore + COD Payment→cancelled. Phase 9 still owns reviews/ratings, admin cancel, post-ship returns/refunds, coupon release, settlement ledger, and any Parent auto-derivation product beyond CAN’s narrow cancel-side coherence.
 
+**Note (2026-08-25):** OPEN-008 / OPEN-009 **V1** product reviews are implemented via Reviews REV (REV-A…D) — delivered-VO eligibility; one review per customer+product; admin `pending→approved|rejected` moderation; PDP approved list + thin product aggregate. **Out of REV V1:** store-level rating (BR-STR-06), vendor replies (BR-REV-06), Coupons, Redis, catalog rating filters. Phase 9 remainder still owns store-rating productization, admin cancel, post-ship returns/refunds, coupon release, settlement ledger, and Parent auto-derivation beyond CAN.
+
 ---
 
 ## Phase 10 — Admin Dashboard, Reports, Operational Tools

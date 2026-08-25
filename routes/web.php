@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Account\ParentOrderController;
+use App\Http\Controllers\Account\ProductReviewController;
 use App\Http\Controllers\Account\VendorApplicationController;
 use App\Http\Controllers\Account\WishlistController;
 use App\Http\Controllers\Admin\AttributeController as AdminAttributeController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Admin\BrandController as AdminBrandController;
 use App\Http\Controllers\Admin\CatalogController as AdminCatalogController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\ProductReviewController as AdminProductReviewController;
 use App\Http\Controllers\Admin\VendorApplicationController as AdminVendorApplicationController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
@@ -84,6 +86,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/account/wishlist/{wishlistItem}', [WishlistController::class, 'destroy'])
         ->whereNumber('wishlistItem')
         ->name('account.wishlist.destroy');
+    Route::post('/account/reviews/{product}', [ProductReviewController::class, 'store'])
+        ->whereNumber('product')
+        ->name('account.reviews.store');
+    Route::put('/account/reviews/{productReview}', [ProductReviewController::class, 'update'])
+        ->whereNumber('productReview')
+        ->name('account.reviews.update');
     Route::view('/account/addresses', 'account.addresses')->name('account.addresses');
     Route::get('/account/vendor-application', [VendorApplicationController::class, 'show'])->name('account.vendor-application');
     Route::post('/account/vendor-application', [VendorApplicationController::class, 'store'])->name('account.vendor-application.store');
@@ -94,6 +102,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/vendor-applications/{vendor_application}', [AdminVendorApplicationController::class, 'show'])->name('vendor-applications.show');
         Route::post('/vendor-applications/{vendor_application}/approve', [AdminVendorApplicationController::class, 'approve'])->name('vendor-applications.approve');
         Route::post('/vendor-applications/{vendor_application}/reject', [AdminVendorApplicationController::class, 'reject'])->name('vendor-applications.reject');
+
+        Route::get('/reviews', [AdminProductReviewController::class, 'index'])->name('reviews.index');
+        Route::get('/reviews/{productReview}', [AdminProductReviewController::class, 'show'])
+            ->whereNumber('productReview')
+            ->name('reviews.show');
+        Route::post('/reviews/{productReview}/approve', [AdminProductReviewController::class, 'approve'])
+            ->whereNumber('productReview')
+            ->name('reviews.approve');
+        Route::post('/reviews/{productReview}/reject', [AdminProductReviewController::class, 'reject'])
+            ->whereNumber('productReview')
+            ->name('reviews.reject');
 
         Route::get('/catalog', AdminCatalogController::class)->name('catalog');
         Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');

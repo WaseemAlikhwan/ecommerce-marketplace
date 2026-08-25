@@ -12,6 +12,7 @@ Large implementation prompts are stored here once and executed as small slices.
 | `vendor-order-lifecycle-vol.md` | **DONE** — VOL-A…C accepted (2026-08-24); focused **10 / 104**; AR/EN **990 / 990**; smoke leftovers **0** |
 | `order-cancellation-can.md` | **DONE** — CAN-A…D accepted (2026-08-24); focused **14 / 143**; AR/EN **998 / 998**; smoke leftovers **0** |
 | `wishlist-wsh.md` | **DONE** — WSH-A…C accepted (2026-08-24); focused **17 / 136**; AR/EN **1003 / 1003**; smoke leftovers **0** |
+| `reviews-rev.md` | **DONE** — REV-A…D accepted (2026-08-25); focused **20 / 257**; AR/EN **1035 / 1035**; smoke leftovers **0** |
 | `storefront-s8c-recovery.md` | DONE — S8C accepted |
 
 ## Rules
@@ -28,6 +29,7 @@ Large implementation prompts are stored here once and executed as small slices.
 10. Do not implement Vendor Order lifecycle until `vendor-order-lifecycle-vol.md` is READY and a named VOL-* slice is requested.
 11. Do not implement cancellations from VOL. Implement cancellations only from `order-cancellation-can.md` when READY and a named CAN-* slice is requested.
 12. Do not start Wishlist from Cart, Checkout, VOL, or CAN. Implement Wishlist only from `wishlist-wsh.md` when READY and a named WSH-* slice is requested.
+13. Do not start Reviews from Cart, Checkout, VOL, CAN, or Wishlist. Implement Reviews only from `reviews-rev.md` when READY and a named REV-* slice is requested.
 
 ## Short Prompt Template
 

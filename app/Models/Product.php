@@ -29,6 +29,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'suspended_at',
     'suspended_by',
     'suspension_reason',
+    'approved_reviews_count',
+    'approved_rating_average',
 ])]
 class Product extends Model
 {
@@ -45,12 +47,19 @@ class Product extends Model
             'status' => ProductStatus::class,
             'published_at' => 'datetime',
             'suspended_at' => 'datetime',
+            'approved_reviews_count' => 'integer',
+            'approved_rating_average' => 'decimal:2',
         ];
     }
 
     public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(ProductReview::class);
     }
 
     public function category(): BelongsTo

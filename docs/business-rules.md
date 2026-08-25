@@ -65,7 +65,7 @@ Legend:
 | BR-STR-03 | RULE | Store includes: name, description, logo, banner, contact information, status, rating, and default currency code (ADR-033). |
 | BR-STR-04 | OPEN DECISION | Store statuses (e.g., `draft`, `active`, `inactive`, `suspended`) — exact enum beyond sellable vs suspended. |
 | BR-STR-05 | RULE | Only active (or equivalently sellable) stores’ products are purchasable / storefront-sellable. Suspended stores are not sellable (ADR-028). |
-| BR-STR-06 | OPEN DECISION | Is store rating aggregated from product reviews, a separate store-review entity, or admin-set? |
+| BR-STR-06 | OPEN DECISION | Is store rating aggregated from product reviews, a separate store-review entity, or admin-set? **Out of REV V1** (product reviews do not write store rating). |
 | BR-STR-07 | RULE | Store content fields that are customer-facing should be translatable where applicable. |
 
 ---
@@ -234,11 +234,11 @@ Legend:
 | ID | Type | Rule |
 |----|------|------|
 | BR-REV-01 | RULE | Only customers who purchased the product may review it. |
-| BR-REV-02 | OPEN DECISION | Is **delivered** status mandatory before review in V1, or is purchased+completed sufficient? Requirement prefers delivered. |
+| BR-REV-02 | RULE | V1 requires the purchase to sit on a Vendor Order that reached **`delivered`** before review (OPEN-008 closed by REV). |
 | BR-REV-03 | RULE | Duplicate reviews prevented per uniqueness rule. |
-| BR-REV-04 | OPEN DECISION | Uniqueness key: one review per customer per product, or per customer per product per order? |
+| BR-REV-04 | RULE | Uniqueness key for V1: **one review per customer per product** (OPEN-009 closed by REV). |
 | BR-REV-05 | RULE | Reviews can be moderated by admins. |
-| BR-REV-06 | OPEN DECISION | Can vendors respond to reviews in V1? |
+| BR-REV-06 | RULE | Vendor replies to reviews are **out of REV V1** (no vendor response entity/UI). |
 
 ---
 
@@ -394,12 +394,12 @@ Legend:
 Remaining (post-purchase / Phase 8–10; do not invent):
 
 1. Coupon stacking limits (OPEN-007) — coupons out of first Checkout slice  
-2. Review requires delivered vs purchased (OPEN-008)  
-3. Review uniqueness (OPEN-009)  
-4. Cancellation matrix (OPEN-010)  
+2. ~~Review requires delivered vs purchased (OPEN-008)~~ — **V1 closed by REV** (delivered VO required; 2026-08-25)  
+3. ~~Review uniqueness (OPEN-009)~~ — **V1 closed by REV** (one per customer+product; 2026-08-25)  
+4. Cancellation matrix (OPEN-010) — V1 closed by CAN (see decisions); Phase 9 remainder still open  
 5. Notification channels beyond Checkout V1 mail + database minimum (OPEN-013 remainder; SMS later)  
 6. ~~Wishlist product vs variant (OPEN-018)~~ — **V1 closed by WSH** (product-level; 2026-08-24)  
 7. In-flight orders on vendor suspend (OPEN-017)  
-8. Admin KPI/report set (OPEN-020); BR-PAY-05 / BR-SHP-06 operational collector/shipper; BR-CUR-08 display preference; BR-GEO-03 area level; BR-VO-04/05 full status matrices; application re-apply/fields; admin permission catalog  
+8. Admin KPI/report set (OPEN-020); BR-PAY-05 / BR-SHP-06 operational collector/shipper; BR-CUR-08 display preference; BR-GEO-03 area level; BR-VO-04/05 full status matrices; application re-apply/fields; admin permission catalog; store rating productization (BR-STR-06) / vendor review replies beyond REV V1 boundary  
 
 *(Cart persistence/merge closed → ADR-041. Checkout V1 contract closed → ADR-042 / CHK-0.)*  

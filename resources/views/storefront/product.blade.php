@@ -183,6 +183,116 @@
             </div>
         </div>
 
+        <section class="mt-16 border-t border-line pt-10 md:mt-20" aria-labelledby="product-reviews-heading">
+            <div class="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                    <h2 id="product-reviews-heading" class="font-display text-heading-2">{{ __('Reviews') }}</h2>
+                    @if (($reviewAggregate['count'] ?? 0) > 0)
+                        <p class="mt-2 text-sm text-ink-muted">
+                            {{ __('Average rating :rating from :count reviews', [
+                                'rating' => $reviewAggregate['average'],
+                                'count' => $reviewAggregate['count'],
+                            ]) }}
+                        </p>
+                    @else
+                        <p class="mt-2 text-sm text-ink-muted">{{ __('No reviews yet.') }}</p>
+                    @endif
+                </div>
+            </div>
+
+            @if (session('status'))
+                <x-ui.alert tone="success" class="mt-6">{{ session('status') }}</x-ui.alert>
+            @endif
+
+            @if ($errors->has('review'))
+                <x-ui.alert tone="danger" class="mt-6">{{ $errors->first('review') }}</x-ui.alert>
+            @endif
+
+            @if (($approvedReviews ?? []) !== [])
+                <ul class="mt-8 space-y-5">
+                    @foreach ($approvedReviews as $review)
+                        <li class="border border-line bg-surface p-4">
+                            <p class="text-sm font-medium text-ink">{{ __('Rating') }}: {{ $review['rating'] }}/5</p>
+                            @if (! empty($review['body']))
+                                <p class="mt-2 text-sm leading-relaxed text-ink-muted" dir="auto">{{ $review['body'] }}</p>
+                            @endif
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+
+            <div class="mt-10 max-w-xl border border-line bg-surface p-5">
+                @auth
+                    @if ($ownReview)
+                        <h3 class="font-display text-heading-3">{{ __('Update your review') }}</h3>
+                        @if ($ownReview['is_pending'])
+                            <p class="mt-2 text-sm text-ink-muted">{{ __('Your review is pending moderation.') }}</p>
+                        @elseif ($ownReview['is_rejected'])
+                            <p class="mt-2 text-sm text-ink-muted">{{ __('Your review was rejected. You may edit and resubmit.') }}</p>
+                        @elseif ($ownReview['is_approved'])
+                            <p class="mt-2 text-sm text-ink-muted">{{ __('Editing will send your review back for moderation.') }}</p>
+                        @endif
+                        <form method="post" action="{{ route('account.reviews.update', $ownReview['id']) }}" class="mt-4 space-y-4">
+                            @csrf
+                            @method('PUT')
+                            <div>
+                                <label for="review-rating" class="text-sm font-medium text-ink">{{ __('Rating') }}</label>
+                                <select id="review-rating" name="rating" required class="mt-1 block w-full border border-line bg-canvas px-3 py-2 text-sm">
+                                    @for ($n = 5; $n >= 1; $n--)
+                                        <option value="{{ $n }}" @selected((int) old('rating', $ownReview['rating']) === $n)>{{ $n }}</option>
+                                    @endfor
+                                </select>
+                                @error('rating')
+                                    <p class="mt-1 text-sm text-danger">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="review-body" class="text-sm font-medium text-ink">{{ __('Your review') }}</label>
+                                <textarea id="review-body" name="body" rows="4" maxlength="2000" class="mt-1 block w-full border border-line bg-canvas px-3 py-2 text-sm" dir="auto">{{ old('body', $ownReview['body']) }}</textarea>
+                                @error('body')
+                                    <p class="mt-1 text-sm text-danger">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <x-ui.button type="submit" variant="primary">{{ __('Save review') }}</x-ui.button>
+                        </form>
+                    @elseif ($canReview ?? false)
+                        <h3 class="font-display text-heading-3">{{ __('Write a review') }}</h3>
+                        <form method="post" action="{{ route('account.reviews.store', $product['id']) }}" class="mt-4 space-y-4">
+                            @csrf
+                            <div>
+                                <label for="review-rating" class="text-sm font-medium text-ink">{{ __('Rating') }}</label>
+                                <select id="review-rating" name="rating" required class="mt-1 block w-full border border-line bg-canvas px-3 py-2 text-sm">
+                                    <option value="" disabled @selected(old('rating') === null)>{{ __('Choose a rating') }}</option>
+                                    @for ($n = 5; $n >= 1; $n--)
+                                        <option value="{{ $n }}" @selected((string) old('rating') === (string) $n)>{{ $n }}</option>
+                                    @endfor
+                                </select>
+                                @error('rating')
+                                    <p class="mt-1 text-sm text-danger">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="review-body" class="text-sm font-medium text-ink">{{ __('Your review') }}</label>
+                                <textarea id="review-body" name="body" rows="4" maxlength="2000" class="mt-1 block w-full border border-line bg-canvas px-3 py-2 text-sm" dir="auto">{{ old('body') }}</textarea>
+                                @error('body')
+                                    <p class="mt-1 text-sm text-danger">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <x-ui.button type="submit" variant="primary">{{ __('Submit review') }}</x-ui.button>
+                        </form>
+                    @else
+                        <p class="text-sm text-ink-muted">{{ __('You can review this product after a delivered purchase.') }}</p>
+                    @endif
+                @else
+                    <h3 class="font-display text-heading-3">{{ __('Write a review') }}</h3>
+                    <p class="mt-2 text-sm text-ink-muted">{{ __('Sign in to write a review.') }}</p>
+                    <div class="mt-4">
+                        <x-ui.button :href="route('login')" variant="secondary">{{ __('Log in') }}</x-ui.button>
+                    </div>
+                @endauth
+            </div>
+        </section>
+
         @if ($product['related'] !== [])
             <section class="mt-20 md:mt-28">
                 <x-commerce.section-heading :kicker="__('Continue')" :title="__('You may also like')" />

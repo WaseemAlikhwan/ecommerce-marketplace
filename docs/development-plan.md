@@ -151,9 +151,11 @@ This plan is incremental. Each phase produces a demonstrable, testable slice. La
 |-------|---------|
 | **Objective** | Configurable economics and simple promotions. |
 | **Features** | Global commission config; vendor overrides; snapshots already wired in Phase 7 hardened; platform/vendor coupons; limits/restrictions; redemption accounting. |
-| **Dependencies** | Phase 7; coupon stacking decision. |
+| **Dependencies** | Phase 7; coupon stacking V1 closed by CPN (OPEN-007). |
 | **Expected output** | Admin configures commission; coupons reduce totals correctly. |
 | **Testing requirements** | Unit tests for discount math/limits; feature tests for redemption concurrency; commission override resolution tests. |
+
+**Note (2026-08-25):** OPEN-007 **V1** coupons are implemented via Coupons CPN (CPN-A…C) — staff CRUD for platform + vendor-scoped coupons; auth checkout apply/remove; exactly one code per checkout; place-order snapshot + redeem; CAN cancel release; commission base stays pre-coupon. **Out of CPN V1:** vendor self-serve coupon UI; complex stacking; Redis; card charge; settlement ledger. Phase 8 remainder still owns commission admin polish / overrides productization beyond what Checkout already snapshots.
 
 ---
 

@@ -5,6 +5,9 @@ namespace App\Services;
 use App\Cart\CartViewLine;
 use App\Checkout\CheckoutReview;
 use App\Contracts\ShippingCalculator;
+use App\Coupons\CheckoutCouponSession;
+use App\Coupons\CouponLineCandidate;
+use App\Exceptions\CouponException;
 use App\Models\Currency;
 use App\Models\CustomerAddress;
 use App\Models\Governorate;
@@ -24,6 +27,7 @@ class CheckoutReviewService
     public function __construct(
         private readonly CartViewService $cartViews,
         private readonly ShippingCalculator $shippingCalculator,
+        private readonly CouponService $coupons,
     ) {}
 
     public function review(User $user, ?string $locale = null): CheckoutReview
@@ -48,6 +52,8 @@ class CheckoutReviewService
 
         /** @var array<int, array{store: Store, vendor: Vendor, currency_code: string, items_subtotal_minor: int, exponent: int}> $groups */
         $groups = [];
+        /** @var list<CouponLineCandidate> $couponCandidates */
+        $couponCandidates = [];
 
         foreach ($payableLines as $line) {
             $variant = $variants->get($line->variantId);
@@ -74,6 +80,26 @@ class CheckoutReviewService
                 $groups[$vendorId]['items_subtotal_minor'],
                 $lineMinor,
             );
+
+            $product = $variant->product;
+            $couponCandidates[] = new CouponLineCandidate(
+                (int) $product->id,
+                $vendorId,
+                $product->category_id !== null ? (int) $product->category_id : null,
+                $line->currencyCode,
+                $lineMinor,
+            );
+        }
+
+        $quote = null;
+        $appliedCode = CheckoutCouponSession::get();
+        if ($appliedCode !== null && $couponCandidates !== []) {
+            try {
+                $quote = $this->coupons->validateAndQuote($user, $appliedCode, $couponCandidates);
+            } catch (CouponException) {
+                CheckoutCouponSession::forget();
+                $appliedCode = null;
+            }
         }
 
         $exponents = Currency::query()
@@ -84,7 +110,7 @@ class CheckoutReviewService
         /** @var array<string, int> $duesMinor */
         $duesMinor = [];
 
-        foreach ($groups as $group) {
+        foreach ($groups as $vendorId => $group) {
             $currency = $group['currency_code'];
             $exponent = (int) ($exponents[$currency] ?? $group['exponent']);
             $shippingMinor = $this->shippingCalculator->feeForVendorOrder(
@@ -92,7 +118,13 @@ class CheckoutReviewService
                 $group['store'],
                 $currency,
             );
-            $dueMinor = CheckedInteger::add($group['items_subtotal_minor'], $shippingMinor);
+            $discountMinor = $quote !== null
+                ? max(0, min((int) ($quote->discountByVendorId[$vendorId] ?? 0), $group['items_subtotal_minor']))
+                : 0;
+            $dueMinor = CheckedInteger::add(
+                CheckedInteger::add($group['items_subtotal_minor'], -$discountMinor),
+                $shippingMinor,
+            );
             $duesMinor[$currency] = CheckedInteger::add($duesMinor[$currency] ?? 0, $dueMinor);
 
             $vendorGroups[] = [
@@ -100,6 +132,9 @@ class CheckoutReviewService
                 'currency_code' => $currency,
                 'items_subtotal' => $this->moneyPayload($currency, $exponent, $group['items_subtotal_minor']),
                 'shipping' => $this->moneyPayload($currency, $exponent, $shippingMinor),
+                'discount' => $discountMinor > 0
+                    ? $this->moneyPayload($currency, $exponent, $discountMinor)
+                    : null,
                 'due' => $this->moneyPayload($currency, $exponent, $dueMinor),
             ];
         }
@@ -108,6 +143,16 @@ class CheckoutReviewService
         $codDues = [];
         foreach ($duesMinor as $code => $minor) {
             $codDues[] = $this->moneyPayload($code, (int) ($exponents[$code] ?? 0), $minor);
+        }
+
+        $couponDiscount = null;
+        if ($quote !== null && $quote->discountTotalMinor > 0) {
+            $couponCurrency = $quote->currencyCode;
+            $couponDiscount = $this->moneyPayload(
+                $couponCurrency,
+                (int) ($exponents[$couponCurrency] ?? 0),
+                $quote->discountTotalMinor,
+            );
         }
 
         $addresses = CustomerAddress::query()
@@ -175,6 +220,9 @@ class CheckoutReviewService
             governorates: $governorates,
             hasPayableLines: $payableLines !== [],
             defaultAddressId: $defaultAddressId,
+            appliedCouponCode: $quote?->code ?? $appliedCode,
+            couponDiscount: $couponDiscount,
+            couponQuote: $quote,
         );
     }
 

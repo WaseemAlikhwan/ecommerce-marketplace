@@ -18,9 +18,12 @@ class CheckoutException extends RuntimeException
 
     public const COMMISSION_UNCONFIGURED = 'commission_unconfigured';
 
+    public const COUPON_REJECTED = 'coupon_rejected';
+
     public function __construct(
         public readonly string $errorCode,
         string $message = '',
+        public readonly ?string $couponErrorCode = null,
     ) {
         parent::__construct($message !== '' ? $message : $errorCode);
     }
@@ -53,5 +56,10 @@ class CheckoutException extends RuntimeException
     public static function commissionUnconfigured(): self
     {
         return new self(self::COMMISSION_UNCONFIGURED);
+    }
+
+    public static function couponRejected(string $couponErrorCode): self
+    {
+        return new self(self::COUPON_REJECTED, couponErrorCode: $couponErrorCode);
     }
 }

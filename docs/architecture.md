@@ -502,7 +502,7 @@ P0 auth/identity/locale items are closed (ADR-014 … ADR-021). Catalog schema-s
 1. Whether to introduce Spatie Permission later (not now)  
 2. Exact admin permission catalog (BR-PERM-07)  
 3. Soft-delete scope for non-catalog entities (users, etc.)  
-4. Coupon stacking (OPEN-007); review gates (OPEN-008/009); cancellation matrix (OPEN-010)  
+4. ~~Coupon stacking (OPEN-007)~~ — V1 closed by CPN (single code per checkout); ~~review gates (OPEN-008/009)~~ — V1 closed by REV; cancellation matrix (OPEN-010) V1 closed by CAN (Phase 9 remainder still open)  
 5. Notification channels beyond mail + database (OPEN-013 remainder)  
 6. Wishlist target (OPEN-018); in-flight suspend policy (OPEN-017); admin KPI set (OPEN-020)  
 7. Operational COD collector / shipper narratives (BR-PAY-05 / BR-SHP-06)  

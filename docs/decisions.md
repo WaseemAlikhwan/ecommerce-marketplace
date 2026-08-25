@@ -818,8 +818,10 @@ S8B wired these scopes into every public Storefront catalog route and removed th
 
 ### OPEN-007 — Coupon stacking
 
-**Question:** Single coupon only vs one platform + per-vendor coupons?  
-**Recommendation:** Start strict: one platform coupon OR multiple vendor coupons each limited to their vendor — pick one simple rule and document examples.
+**Status:** V1 closed by CPN (2026-08-25) — see `docs/tasks/coupons-cpn.md`  
+**V1 rule (implemented):** **Exactly one coupon code per checkout** (Parent place attempt). Platform and vendor-scoped coupons both exist, but they do not stack: applying a second distinct code fails closed until the first is removed. Vendor-scoped codes discount only that vendor’s eligible items.  
+**Still out of V1:** Platform + vendor simultaneous apply; complex stacking matrices; vendor self-serve coupon UI; Redis coupon cache; card charge; settlement / refund ledger.  
+**Gate:** Focused CPN **19 / 140**; AR/EN **1091 / 1091**; smoke leftovers **0**.
 
 ### OPEN-008 — Review eligibility
 

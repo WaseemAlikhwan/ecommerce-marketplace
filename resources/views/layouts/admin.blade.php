@@ -15,6 +15,7 @@
                 <x-ui.nav-link tone="dark" :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">{{ __('Overview') }}</x-ui.nav-link>
                 <x-ui.nav-link tone="dark" :href="route('admin.vendors')" :active="request()->routeIs('admin.vendors')">{{ __('Vendors') }}</x-ui.nav-link>
                 <x-ui.nav-link tone="dark" :href="route('admin.reviews.index')" :active="request()->routeIs('admin.reviews.*')">{{ __('Product reviews') }}</x-ui.nav-link>
+                <x-ui.nav-link tone="dark" :href="route('admin.coupons.index')" :active="request()->routeIs('admin.coupons.*')">{{ __('Coupons') }}</x-ui.nav-link>
                 <x-ui.nav-link tone="dark" :href="route('admin.catalog')" :active="request()->routeIs('admin.catalog', 'admin.categories.*', 'admin.brands.*', 'admin.attributes.*', 'admin.attribute-values.*')">{{ __('Catalog') }}</x-ui.nav-link>
                 <x-ui.nav-link tone="dark" :href="route('admin.orders')" :active="request()->routeIs('admin.orders')">{{ __('Orders') }}</x-ui.nav-link>
                 <x-ui.nav-link tone="dark" :href="route('admin.settings')" :active="request()->routeIs('admin.settings')">{{ __('Settings') }}</x-ui.nav-link>
@@ -56,6 +57,7 @@
             <x-ui.nav-link tone="dark" :href="route('admin.dashboard')">{{ __('Overview') }}</x-ui.nav-link>
             <x-ui.nav-link tone="dark" :href="route('admin.vendors')">{{ __('Vendors') }}</x-ui.nav-link>
             <x-ui.nav-link tone="dark" :href="route('admin.reviews.index')">{{ __('Product reviews') }}</x-ui.nav-link>
+            <x-ui.nav-link tone="dark" :href="route('admin.coupons.index')">{{ __('Coupons') }}</x-ui.nav-link>
             <x-ui.nav-link tone="dark" :href="route('admin.catalog')">{{ __('Catalog') }}</x-ui.nav-link>
             <x-ui.nav-link tone="dark" :href="route('admin.orders')">{{ __('Orders') }}</x-ui.nav-link>
             <x-ui.nav-link tone="dark" :href="route('admin.settings')">{{ __('Settings') }}</x-ui.nav-link>

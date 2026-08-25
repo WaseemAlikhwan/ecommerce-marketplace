@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\AttributeValueController as AdminAttributeValueCo
 use App\Http\Controllers\Admin\BrandController as AdminBrandController;
 use App\Http\Controllers\Admin\CatalogController as AdminCatalogController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\CouponController as AdminCouponController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ProductReviewController as AdminProductReviewController;
 use App\Http\Controllers\Admin\VendorApplicationController as AdminVendorApplicationController;
@@ -75,6 +76,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/checkout', [StorefrontCheckoutController::class, 'create'])->name('checkout.create');
     Route::post('/checkout', [StorefrontCheckoutController::class, 'store'])->name('checkout.store');
+    Route::post('/checkout/coupon', [StorefrontCheckoutController::class, 'applyCoupon'])->name('checkout.coupon.apply');
+    Route::delete('/checkout/coupon', [StorefrontCheckoutController::class, 'removeCoupon'])->name('checkout.coupon.remove');
 
     Route::get('/account/orders', [ParentOrderController::class, 'index'])->name('account.orders');
     Route::get('/account/orders/{parentOrder}', [ParentOrderController::class, 'show'])->name('account.orders.show');
@@ -113,6 +116,22 @@ Route::middleware('auth')->group(function () {
         Route::post('/reviews/{productReview}/reject', [AdminProductReviewController::class, 'reject'])
             ->whereNumber('productReview')
             ->name('reviews.reject');
+
+        Route::get('/coupons', [AdminCouponController::class, 'index'])->name('coupons.index');
+        Route::get('/coupons/create', [AdminCouponController::class, 'create'])->name('coupons.create');
+        Route::post('/coupons', [AdminCouponController::class, 'store'])->name('coupons.store');
+        Route::get('/coupons/{coupon}', [AdminCouponController::class, 'show'])
+            ->whereNumber('coupon')
+            ->name('coupons.show');
+        Route::get('/coupons/{coupon}/edit', [AdminCouponController::class, 'edit'])
+            ->whereNumber('coupon')
+            ->name('coupons.edit');
+        Route::put('/coupons/{coupon}', [AdminCouponController::class, 'update'])
+            ->whereNumber('coupon')
+            ->name('coupons.update');
+        Route::patch('/coupons/{coupon}/status', [AdminCouponController::class, 'updateStatus'])
+            ->whereNumber('coupon')
+            ->name('coupons.status');
 
         Route::get('/catalog', AdminCatalogController::class)->name('catalog');
         Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');

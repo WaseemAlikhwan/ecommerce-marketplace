@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'public_code',
     'user_id',
     'status',
+    'coupon_id',
+    'coupon_code',
     'shipping_recipient_name',
     'shipping_phone',
     'shipping_governorate_id',

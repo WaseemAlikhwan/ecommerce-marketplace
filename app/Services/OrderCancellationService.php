@@ -21,6 +21,10 @@ use Illuminate\Support\Facades\DB;
  */
 class OrderCancellationService
 {
+    public function __construct(
+        private readonly CouponService $coupons,
+    ) {}
+
     /**
      * Customer cancels own Parent Order while every Vendor Order is still pending.
      */
@@ -64,6 +68,8 @@ class OrderCancellationService
 
             $lockedParent->status = ParentOrderStatus::Cancelled;
             $lockedParent->save();
+
+            $this->coupons->releaseForParentOrder($lockedParent);
 
             return $cancelled;
         });
@@ -112,6 +118,8 @@ class OrderCancellationService
                 $parent->status = ParentOrderStatus::Cancelled;
                 $parent->save();
             }
+
+            $this->coupons->releaseAfterVendorOrderCancelled($cancelledVo);
 
             return $cancelledVo->fresh(['parentOrder.user', 'vendor.user', 'payment', 'items']) ?? $cancelledVo;
         });

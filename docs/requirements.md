@@ -341,7 +341,7 @@ P0 items resolved in `docs/p0-decisions.md` (approved 2026-08-11) are **removed*
 | Multi-currency cart / checkout | **Cart (ADR-041):** mixed currencies allowed; per-currency subtotals; no conversion. **Checkout (ADR-042):** place without FX; per-currency COD dues. |
 | Commission timing | **Closed** ADR-042 — snapshot at placement; recognize at delivered |
 | COD settlement | Operational who-collects remains BR-PAY-05 OPEN; software tracks Payment per VO |
-| Coupon stacking | OPEN-007 — out of first Checkout slice (Phase 8) |
+| Coupon stacking | OPEN-007 **V1 closed by CPN** — exactly one coupon code per checkout (Phase 8) |
 | Review gate | Delivered required or purchased sufficient for V1? (OPEN-008) |
 | Cancellation window | Who cancels what, until which status? (OPEN-010) |
 | Refunds | Any V1 partial support for COD cancel-before-delivery? |

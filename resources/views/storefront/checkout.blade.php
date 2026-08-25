@@ -18,21 +18,26 @@
             <p class="mt-2 max-w-2xl text-sm text-ink-muted">{{ __('Choose a Syria shipping address, review shipping and COD dues by currency, then place your order.') }}</p>
         </div>
 
+        @if (session('status'))
+            <div class="mt-6">
+                <x-ui.alert tone="success">{{ session('status') }}</x-ui.alert>
+            </div>
+        @endif
+
         @if ($errors->any())
             <div class="mt-6">
                 <x-ui.alert tone="danger">{{ $errors->first() }}</x-ui.alert>
             </div>
         @endif
 
-        <form method="POST" action="{{ route('checkout.store') }}" class="mt-10 grid gap-10 lg:grid-cols-12 lg:gap-14"
+        <div class="mt-10 grid gap-10 lg:grid-cols-12 lg:gap-14"
               x-data="{
                   mode: '{{ old('address_mode', $review->defaultAddressId ? 'existing' : 'new') }}',
                   governorateId: '{{ old('governorate_id', '') }}',
                   citiesByGovernorate: {{ Js::from(collect($review->governorates)->mapWithKeys(fn ($g) => [(string) $g['id'] => $g['cities']])) }}
               }">
-            @csrf
-
-            <div class="space-y-8 lg:col-span-7">
+            <form id="checkout-form" method="POST" action="{{ route('checkout.store') }}" class="space-y-8 lg:col-span-7">
+                @csrf
                 <section class="border border-line bg-surface p-6">
                     <h2 class="font-display text-heading-3">{{ __('Shipping address') }}</h2>
                     <p class="mt-2 text-sm text-ink-muted">{{ __('Syria governorate and city only — no area level.') }}</p>
@@ -143,12 +148,46 @@
                         @endforeach
                     </ul>
                 </section>
-            </div>
+            </form>
 
             <aside class="lg:col-span-5">
                 <div class="border border-line bg-surface p-6 lg:sticky lg:top-28">
                     <h2 class="font-display text-heading-3">{{ __('Order summary') }}</h2>
                     <p class="mt-2 text-sm text-ink-muted">{{ __('Cash on delivery. Mixed currencies stay separate.') }}</p>
+
+                    <div class="mt-6 border-b border-line pb-4">
+                        <p class="text-sm font-medium">{{ __('Coupon') }}</p>
+                        @if ($review->appliedCouponCode)
+                            <div class="mt-3 flex items-start justify-between gap-3 text-sm">
+                                <div>
+                                    <p class="font-medium">{{ $review->appliedCouponCode }}</p>
+                                    @if ($review->couponDiscount)
+                                        <p class="mt-1 text-ink-muted">{{ __('Discount') }}: −{{ $review->couponDiscount['label'] }}</p>
+                                    @endif
+                                </div>
+                                <form method="POST" action="{{ route('checkout.coupon.remove') }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-sm text-ink-muted underline hover:text-ink">{{ __('Remove coupon') }}</button>
+                                </form>
+                            </div>
+                        @else
+                            <form method="POST" action="{{ route('checkout.coupon.apply') }}" class="mt-3 flex gap-2">
+                                @csrf
+                                <input
+                                    type="text"
+                                    name="code"
+                                    value="{{ old('code') }}"
+                                    maxlength="64"
+                                    autocomplete="off"
+                                    class="ds-input block w-full"
+                                    placeholder="{{ __('Enter coupon code') }}"
+                                    aria-label="{{ __('Coupon code') }}"
+                                >
+                                <x-ui.button variant="secondary" type="submit">{{ __('Apply coupon') }}</x-ui.button>
+                            </form>
+                        @endif
+                    </div>
 
                     <div class="mt-6 space-y-4">
                         @foreach ($review->vendorGroups as $group)
@@ -163,6 +202,12 @@
                                         <dt class="text-ink-muted">{{ __('Shipping') }}</dt>
                                         <dd>{{ $group['shipping']['label'] }}</dd>
                                     </div>
+                                    @if (! empty($group['discount']))
+                                        <div class="flex justify-between gap-3">
+                                            <dt class="text-ink-muted">{{ __('Discount') }}</dt>
+                                            <dd>−{{ $group['discount']['label'] }}</dd>
+                                        </div>
+                                    @endif
                                     <div class="flex justify-between gap-3 font-medium">
                                         <dt>{{ __('COD due') }}</dt>
                                         <dd>{{ $group['due']['label'] }}</dd>
@@ -183,13 +228,13 @@
                     </div>
 
                     <div class="mt-8">
-                        <x-ui.button variant="primary" class="w-full" type="submit">{{ __('Place order') }}</x-ui.button>
+                        <x-ui.button variant="primary" class="w-full" type="submit" form="checkout-form">{{ __('Place order') }}</x-ui.button>
                         <p class="mt-3 text-center text-caption text-ink-muted">
                             <a href="{{ route('cart.show') }}" class="underline">{{ __('Back to cart') }}</a>
                         </p>
                     </div>
                 </div>
             </aside>
-        </form>
+        </div>
     </div>
 </x-storefront-layout>

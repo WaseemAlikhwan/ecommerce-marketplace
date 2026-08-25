@@ -5,9 +5,13 @@ namespace App\Services;
 use App\Checkout\PlaceOrderResult;
 use App\Contracts\PaymentGateway;
 use App\Contracts\ShippingCalculator;
+use App\Coupons\CheckoutCouponSession;
+use App\Coupons\CouponLineCandidate;
+use App\Coupons\CouponQuote;
 use App\Enums\ParentOrderStatus;
 use App\Enums\VendorOrderStatus;
 use App\Exceptions\CheckoutException;
+use App\Exceptions\CouponException;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\CommissionSetting;
@@ -31,6 +35,7 @@ class CheckoutService
     public function __construct(
         private readonly ShippingCalculator $shippingCalculator,
         private readonly PaymentGateway $paymentGateway,
+        private readonly CouponService $coupons,
     ) {}
 
     public function placeOrder(User $user, CustomerAddress $address): PlaceOrderResult
@@ -65,10 +70,27 @@ class CheckoutService
             $resolvedLines = $this->resolveAndLockLines($cartItems);
             $groups = $this->groupLinesByVendor($resolvedLines);
 
+            $couponCode = CheckoutCouponSession::get();
+            $quote = null;
+            if ($couponCode !== null) {
+                try {
+                    $quote = $this->coupons->validateAndQuote(
+                        $user,
+                        $couponCode,
+                        $this->couponCandidatesFromResolved($resolvedLines),
+                    );
+                } catch (CouponException $e) {
+                    CheckoutCouponSession::forget();
+                    throw CheckoutException::couponRejected($e->errorCode);
+                }
+            }
+
             $parent = ParentOrder::query()->create([
                 'public_code' => PublicOrderCode::parent(),
                 'user_id' => $user->id,
                 'status' => ParentOrderStatus::Placed,
+                'coupon_id' => $quote?->couponId,
+                'coupon_code' => $quote?->code,
                 'shipping_recipient_name' => $address->recipient_name,
                 'shipping_phone' => $address->phone,
                 'shipping_governorate_id' => $address->governorate_id,
@@ -88,7 +110,12 @@ class CheckoutService
             $dues = [];
 
             foreach ($groups as $group) {
-                $vendorOrder = $this->createVendorOrder($parent, $address, $group);
+                $vendorId = (int) $group['vendor']->id;
+                $discountMinor = $quote !== null
+                    ? (int) ($quote->discountByVendorId[$vendorId] ?? 0)
+                    : 0;
+
+                $vendorOrder = $this->createVendorOrder($parent, $address, $group, $quote, $discountMinor);
                 $dues[$vendorOrder->currency_code] = CheckedInteger::add(
                     $dues[$vendorOrder->currency_code] ?? 0,
                     $vendorOrder->grand_total_amount_minor,
@@ -96,7 +123,12 @@ class CheckoutService
                 $this->paymentGateway->chargeVendorOrder($vendorOrder);
             }
 
+            if ($quote !== null) {
+                $this->coupons->redeem($user, $quote, $parent);
+            }
+
             CartItem::query()->where('cart_id', $cart->id)->delete();
+            CheckoutCouponSession::forget();
 
             ksort($dues);
 
@@ -273,8 +305,13 @@ class CheckoutService
      *     lines: list<array<string, mixed>>
      * }  $group
      */
-    private function createVendorOrder(ParentOrder $parent, CustomerAddress $address, array $group): VendorOrder
-    {
+    private function createVendorOrder(
+        ParentOrder $parent,
+        CustomerAddress $address,
+        array $group,
+        ?CouponQuote $quote,
+        int $discountMinor,
+    ): VendorOrder {
         $itemsSubtotal = 0;
         foreach ($group['lines'] as $line) {
             $itemsSubtotal = CheckedInteger::add($itemsSubtotal, (int) $line['lineTotalMinor']);
@@ -286,9 +323,15 @@ class CheckoutService
             $group['currencyCode'],
         ));
 
+        $discountMinor = max(0, min($discountMinor, $itemsSubtotal));
+
         $rateBps = $this->resolveCommissionRateBps((int) $group['vendor']->id);
+        // Commission base stays pre-coupon item subtotal (OPEN-007 / CPN freeze).
         $commissionAmount = intdiv(CheckedInteger::multiply($itemsSubtotal, $rateBps), 10_000);
-        $grandTotal = CheckedInteger::add($itemsSubtotal, $shippingMinor);
+        $grandTotal = CheckedInteger::add(
+            CheckedInteger::add($itemsSubtotal, -$discountMinor),
+            $shippingMinor,
+        );
 
         $vendorOrder = VendorOrder::query()->create([
             'public_code' => PublicOrderCode::vendor(),
@@ -300,6 +343,9 @@ class CheckoutService
             'status' => VendorOrderStatus::Pending,
             'items_subtotal_amount_minor' => $itemsSubtotal,
             'shipping_amount_minor' => $shippingMinor,
+            'discount_amount_minor' => $discountMinor,
+            'coupon_code' => $discountMinor > 0 ? $quote?->code : null,
+            'coupon_id' => $discountMinor > 0 ? $quote?->couponId : null,
             'grand_total_amount_minor' => $grandTotal,
             'commission_rate_bps' => $rateBps,
             'commission_base_amount_minor' => $itemsSubtotal,
@@ -364,5 +410,31 @@ class CheckoutService
         }
 
         return $rate;
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $resolvedLines
+     * @return list<CouponLineCandidate>
+     */
+    private function couponCandidatesFromResolved(array $resolvedLines): array
+    {
+        $candidates = [];
+
+        foreach ($resolvedLines as $line) {
+            /** @var Product $product */
+            $product = $line['product'];
+            /** @var Vendor $vendor */
+            $vendor = $line['vendor'];
+
+            $candidates[] = new CouponLineCandidate(
+                (int) $product->id,
+                (int) $vendor->id,
+                $product->category_id !== null ? (int) $product->category_id : null,
+                (string) $line['currencyCode'],
+                (int) $line['lineTotalMinor'],
+            );
+        }
+
+        return $candidates;
     }
 }

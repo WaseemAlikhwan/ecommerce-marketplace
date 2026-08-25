@@ -208,8 +208,8 @@ Legend:
 | BR-CPN-02 | RULE | Discount types: percentage and fixed amount. |
 | BR-CPN-03 | RULE | Coupons may restrict by product and/or category. |
 | BR-CPN-04 | RULE | Coupons support min order amount, max discount, schedule window, global usage limit, per-user usage limit. |
-| BR-CPN-05 | OPEN DECISION | May a cart apply both a platform coupon and a vendor coupon? |
-| BR-CPN-06 | OPEN DECISION | Maximum coupons per checkout (recommended V1: **one platform coupon + at most one coupon per vendor order** OR **single coupon only**). |
+| BR-CPN-05 | RULE | V1: a cart may **not** apply both a platform coupon and a vendor coupon at once — **exactly one coupon code per checkout** (OPEN-007 closed by CPN). |
+| BR-CPN-06 | RULE | V1 maximum coupons per checkout = **one** (single code on the Parent place attempt). No platform+per-VO stacking matrix in V1 (OPEN-007 closed by CPN). |
 | BR-CPN-07 | RULE | Vendor coupons may discount only that vendor’s eligible items. |
 | BR-CPN-08 | RULE | Coupon redemption is recorded and counted toward usage limits inside the checkout transaction. |
 | BR-CPN-09 | RULE | Do not over-engineer V1 (no complex promotion engines). |
@@ -393,7 +393,7 @@ Legend:
 
 Remaining (post-purchase / Phase 8–10; do not invent):
 
-1. Coupon stacking limits (OPEN-007) — coupons out of first Checkout slice  
+1. Coupon stacking beyond V1 single-code (OPEN-007 V1 closed by CPN — platform+vendor simultaneous / richer matrices still out)  
 2. ~~Review requires delivered vs purchased (OPEN-008)~~ — **V1 closed by REV** (delivered VO required; 2026-08-25)  
 3. ~~Review uniqueness (OPEN-009)~~ — **V1 closed by REV** (one per customer+product; 2026-08-25)  
 4. Cancellation matrix (OPEN-010) — V1 closed by CAN (see decisions); Phase 9 remainder still open  

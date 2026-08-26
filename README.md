@@ -35,6 +35,33 @@ Host port defaults avoid a common local collision with other stacks (`8080`/`637
 
 Optional Super Admin seed: set `SUPER_ADMIN_EMAIL` and `SUPER_ADMIN_PASSWORD` in `.env`, then re-run `php artisan db:seed`.
 
+### Demo marketplace data (local/staging only)
+
+Platform seed (`migrate --seed` / `migrate:fresh --seed`) stays lean: roles, currencies, Syria geo, commission settings, optional Super Admin. It does **not** load demo catalog/orders.
+
+After platform seed, fill a full V1 walkthrough dataset:
+
+```bash
+# Docker
+docker compose exec app php artisan demo:seed
+
+# Laragon / local PHP
+php artisan demo:seed
+```
+
+`demo:seed` refuses `APP_ENV=production`. Re-running is safe (upserts by stable demo emails/slugs/codes; skips existing demo orders).
+
+| Role | Email | Password |
+|------|-------|----------|
+| Customer | `customer@demo.test` | `password` |
+| Vendor (SYP store) | `vendor.syp@demo.test` | `password` |
+| Vendor (USD store) | `vendor.usd@demo.test` | `password` |
+| Vendor (SYP store 2) | `vendor.syp2@demo.test` | `password` |
+
+Coupons: `SAVE10` (platform 10% SYP), `SHOPSYP10` (vendor SYP store 10%).
+
+Suggested walkthrough: browse Home/Search/Category → add SYP linen scarf to cart → apply `SAVE10` on checkout → place COD → as `vendor.syp@demo.test` confirm/ship/deliver → as customer submit a product review → place/cancel the multi-vendor pending Parent (or advance the USD tee VO from `confirmed`).
+
 ## Quick start (Laragon / local PHP)
 
 ```bash

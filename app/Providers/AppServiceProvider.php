@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Admin\AdminDashboardStats;
 use App\Contracts\PaymentGateway;
 use App\Contracts\ShippingCalculator;
 use App\Models\Attribute;
@@ -9,7 +10,9 @@ use App\Models\AttributeValue;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Payments\CodPaymentGateway;
+use App\Policies\AdminDashboardPolicy;
 use App\Shipping\FlatPerVendorShippingCalculator;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -32,6 +35,8 @@ class AppServiceProvider extends ServiceProvider
     {
         // P0-7 / ADR-020: minimum 8 characters, confirmed at call sites; no complexity class.
         Password::defaults(static fn () => Password::min(8));
+
+        Gate::policy(AdminDashboardStats::class, AdminDashboardPolicy::class);
 
         Route::bind('product', function (string $value): Product {
             $query = Product::query();

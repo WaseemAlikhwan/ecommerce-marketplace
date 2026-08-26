@@ -185,6 +185,8 @@ This plan is incremental. Each phase produces a demonstrable, testable slice. La
 | **Expected output** | Admin can operate the marketplace without DB tools. |
 | **Testing requirements** | Permission-gated admin feature tests; report total consistency with snapshots. |
 
+**Note (2026-08-26):** OPEN-020 **V1** admin ops are implemented via Admin Ops ADM (ADM-A…D) — frozen KPI dashboard (counts + recognized commission sums per currency; no CSV/PDF export); staff read-only Parent/VO/Payment screens; thin users index; read-only global commission setting; staff fail-closed. **Out of ADM V1:** exports (BR-RPT-02); admin cancel; COD collected mutation; settlement ledger; card charge; BR-PERM-07 permission UI; Redis. Phase 10 remainder (if any polish beyond this gate) stays after ADM.
+
 ---
 
 ## Phase 11 — Hardening, Performance Basics, Documentation Handoff

@@ -11,8 +11,13 @@ use App\Http\Controllers\Admin\CatalogController as AdminCatalogController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\CouponController as AdminCouponController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\ParentOrderController as AdminParentOrderController;
+use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\Admin\ProductReviewController as AdminProductReviewController;
+use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\VendorApplicationController as AdminVendorApplicationController;
+use App\Http\Controllers\Admin\VendorOrderController as AdminVendorOrderController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Storefront\CartController as StorefrontCartController;
@@ -162,8 +167,24 @@ Route::middleware('auth')->group(function () {
         Route::put('/attributes/{attribute}/values/{attribute_value}', [AdminAttributeValueController::class, 'update'])->name('attribute-values.update');
         Route::patch('/attributes/{attribute}/values/{attribute_value}/status', [AdminAttributeValueController::class, 'updateStatus'])->name('attribute-values.status');
 
-        Route::view('/orders', 'admin.placeholder')->name('orders');
-        Route::view('/settings', 'admin.placeholder')->name('settings');
+        Route::get('/orders', [AdminParentOrderController::class, 'index'])->name('orders');
+        Route::get('/orders/{parentOrder}', [AdminParentOrderController::class, 'show'])
+            ->whereNumber('parentOrder')
+            ->name('orders.show');
+
+        Route::get('/vendor-orders', [AdminVendorOrderController::class, 'index'])->name('vendor-orders.index');
+        Route::get('/vendor-orders/{vendorOrder}', [AdminVendorOrderController::class, 'show'])
+            ->whereNumber('vendorOrder')
+            ->name('vendor-orders.show');
+
+        Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');
+        Route::get('/payments/{payment}', [AdminPaymentController::class, 'show'])
+            ->whereNumber('payment')
+            ->name('payments.show');
+
+        Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+
+        Route::get('/settings', AdminSettingsController::class)->name('settings');
     });
 
     Route::middleware('vendor')->prefix('vendor')->name('vendor.')->group(function () {

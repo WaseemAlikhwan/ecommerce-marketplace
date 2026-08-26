@@ -17,7 +17,10 @@
                 <x-ui.nav-link tone="dark" :href="route('admin.reviews.index')" :active="request()->routeIs('admin.reviews.*')">{{ __('Product reviews') }}</x-ui.nav-link>
                 <x-ui.nav-link tone="dark" :href="route('admin.coupons.index')" :active="request()->routeIs('admin.coupons.*')">{{ __('Coupons') }}</x-ui.nav-link>
                 <x-ui.nav-link tone="dark" :href="route('admin.catalog')" :active="request()->routeIs('admin.catalog', 'admin.categories.*', 'admin.brands.*', 'admin.attributes.*', 'admin.attribute-values.*')">{{ __('Catalog') }}</x-ui.nav-link>
-                <x-ui.nav-link tone="dark" :href="route('admin.orders')" :active="request()->routeIs('admin.orders')">{{ __('Orders') }}</x-ui.nav-link>
+                <x-ui.nav-link tone="dark" :href="route('admin.orders')" :active="request()->routeIs('admin.orders', 'admin.orders.*')">{{ __('Orders') }}</x-ui.nav-link>
+                <x-ui.nav-link tone="dark" :href="route('admin.vendor-orders.index')" :active="request()->routeIs('admin.vendor-orders.*')">{{ __('Vendor orders') }}</x-ui.nav-link>
+                <x-ui.nav-link tone="dark" :href="route('admin.payments.index')" :active="request()->routeIs('admin.payments.*')">{{ __('Payments') }}</x-ui.nav-link>
+                <x-ui.nav-link tone="dark" :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">{{ __('Users') }}</x-ui.nav-link>
                 <x-ui.nav-link tone="dark" :href="route('admin.settings')" :active="request()->routeIs('admin.settings')">{{ __('Settings') }}</x-ui.nav-link>
             </nav>
             <div class="p-3">
@@ -60,6 +63,9 @@
             <x-ui.nav-link tone="dark" :href="route('admin.coupons.index')">{{ __('Coupons') }}</x-ui.nav-link>
             <x-ui.nav-link tone="dark" :href="route('admin.catalog')">{{ __('Catalog') }}</x-ui.nav-link>
             <x-ui.nav-link tone="dark" :href="route('admin.orders')">{{ __('Orders') }}</x-ui.nav-link>
+            <x-ui.nav-link tone="dark" :href="route('admin.vendor-orders.index')">{{ __('Vendor orders') }}</x-ui.nav-link>
+            <x-ui.nav-link tone="dark" :href="route('admin.payments.index')">{{ __('Payments') }}</x-ui.nav-link>
+            <x-ui.nav-link tone="dark" :href="route('admin.users.index')">{{ __('Users') }}</x-ui.nav-link>
             <x-ui.nav-link tone="dark" :href="route('admin.settings')">{{ __('Settings') }}</x-ui.nav-link>
         </nav>
         <div class="mt-6 border-t border-white/10 pt-4">

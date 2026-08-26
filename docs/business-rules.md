@@ -379,8 +379,8 @@ Legend:
 
 | ID | Type | Rule |
 |----|------|------|
-| BR-RPT-01 | RULE | Admin dashboard shows core stats (orders, users, vendors, GMV-like totals — exact KPIs OPEN DECISION). |
-| BR-RPT-02 | OPEN DECISION | Report export formats (CSV only vs PDF). |
+| BR-RPT-01 | RULE | Admin dashboard shows the V1 KPI set (OPEN-020 / ADM): pending vendor applications; pending product reviews; Parent orders with status `placed`; Vendor Order counts by status (`pending` / `confirmed` / `shipped` / `delivered` / `cancelled`); COD Payment counts by status (`pending` / `collected` / `cancelled`); published products; approved vendors; recognized commission amount sum per `currency_code` (VOs with `commission_recognized_at` set — BR-RPT-03). Counts and snapshotted money totals only. |
+| BR-RPT-02 | OPEN DECISION | Report export formats (CSV only vs PDF) — **out of ADM V1** (no CSV/PDF export in Admin Ops V1). |
 | BR-RPT-03 | RULE | Financial figures for historical orders use snapshotted rates/commissions. |
 
 ---
@@ -400,6 +400,6 @@ Remaining (post-purchase / Phase 8–10; do not invent):
 5. Notification channels beyond Checkout V1 mail + database minimum (OPEN-013 remainder; SMS later)  
 6. ~~Wishlist product vs variant (OPEN-018)~~ — **V1 closed by WSH** (product-level; 2026-08-24)  
 7. In-flight orders on vendor suspend (OPEN-017)  
-8. Admin KPI/report set (OPEN-020); BR-PAY-05 / BR-SHP-06 operational collector/shipper; BR-CUR-08 display preference; BR-GEO-03 area level; BR-VO-04/05 full status matrices; application re-apply/fields; admin permission catalog; store rating productization (BR-STR-06) / vendor review replies beyond REV V1 boundary  
+8. ~~Admin KPI/report set (OPEN-020)~~ — **V1 closed by ADM** (counts + recognized commission sums; no CSV/PDF export; 2026-08-26); BR-PAY-05 / BR-SHP-06 operational collector/shipper; BR-CUR-08 display preference; BR-GEO-03 area level; BR-VO-04/05 full status matrices; application re-apply/fields; admin permission catalog; store rating productization (BR-STR-06) / vendor review replies beyond REV V1 boundary  
 
 *(Cart persistence/merge closed → ADR-041. Checkout V1 contract closed → ADR-042 / CHK-0.)*  

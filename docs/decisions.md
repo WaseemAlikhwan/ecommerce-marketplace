@@ -887,7 +887,10 @@ S8B wired these scopes into every public Storefront catalog route and removed th
 
 ### OPEN-020 — Admin KPI/report set
 
-**Question:** Exact dashboard metrics and export needs for grading/demo.
+**Status:** V1 closed by ADM (2026-08-26) — see `docs/tasks/admin-ops-adm.md`  
+**V1 rule (implemented):** Admin dashboard shows the frozen KPI set as **counts** (and recognized-commission money totals where noted) only — pending vendor applications; pending product reviews; Parent orders with status `placed`; VO counts by status (`pending` / `confirmed` / `shipped` / `delivered` / `cancelled`); COD Payment counts by status (`pending` / `collected` / `cancelled`); published products; approved vendors; **recognized commission amount sum per `currency_code`** (VOs with `commission_recognized_at` set — snapshot money, BR-RPT-03). Staff read-only Parent/VO/Payment ops + thin users index + global commission setting show.  
+**Still out of ADM V1:** CSV/PDF exports (BR-RPT-02); admin cancel; COD collected mutation; settlement / refund ledger; card charge; Super Admin permission UI (BR-PERM-07); Redis; vendor self-serve coupons; store rating productization.  
+**Gate:** Focused ADM **12 / 146**; AR/EN **1125 / 1125**; smoke leftovers **0**.
 
 ### OPEN-021 — Inventory reserve vs decrement at checkout (C-05)
 

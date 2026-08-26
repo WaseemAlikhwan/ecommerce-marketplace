@@ -118,13 +118,18 @@ class StorefrontCatalogHttpTest extends TestCase
             $this->withCookie(Locale::COOKIE, 'en')->get(route('storefront.product', $product->slug)),
         ];
 
-        foreach ($responses as $response) {
+        foreach ($responses as $index => $response) {
             $response
                 ->assertOk()
                 ->assertSee('Add to cart')
-                ->assertDontSee('Wishlist')
-                ->assertDontSee('rating', false)
-                ->assertDontSee('review', false);
+                ->assertDontSee('Wishlist');
+
+            // Browse surfaces stay review/rating-free; PDP may show REV V1 section.
+            if ($index < 4) {
+                $response
+                    ->assertDontSee('rating', false)
+                    ->assertDontSee('review', false);
+            }
         }
 
         $responses[1]->assertSee('Visible Linen');

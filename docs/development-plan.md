@@ -199,6 +199,8 @@ This plan is incremental. Each phase produces a demonstrable, testable slice. La
 | **Expected output** | Stable demo environment + developer docs. |
 | **Testing requirements** | Regression suite green; manual UAT script executed. |
 
+**Note (2026-08-26):** Phase 11 **HND V1 handoff accepted** via Hardening HND (HND-A…C) — evaluator runbook + security checklist + UAT script; branded error pages (404/403/419/429/500); thin throttles (password-reset/register/locale); upload max documented (**5120** KB); S8C index/query note (no speculative migrations); `demo:seed` verified/documented only (no seeder rebuild). Final gate: focused HND **8 / 31**; full Docker PHPUnit **493 / 3999**; AR/EN **1141 / 1141**; brief UAT **25 / 0**; leftovers **0**. **Out of HND V1 / still Future:** card charge (F1); settlement/refund ledger (F2); SMS (F7); store rating productization; COD collected mutation UI; admin cancel; Redis application productization; Horizon; speculative index migrations; commerce reopen.
+
 ---
 
 ## Future Phases (Explicitly After V1)

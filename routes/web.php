@@ -68,7 +68,9 @@ Route::get('/health', function () {
     ]);
 })->name('health');
 
-Route::post('/locale', [LocaleController::class, 'update'])->name('locale.update');
+Route::post('/locale', [LocaleController::class, 'update'])
+    ->middleware('throttle:30,1')
+    ->name('locale.update');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {

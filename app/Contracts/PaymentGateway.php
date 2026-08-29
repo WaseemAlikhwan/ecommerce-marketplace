@@ -11,4 +11,9 @@ interface PaymentGateway
      * Record payment for a Vendor Order. V1 COD driver creates a pending row.
      */
     public function chargeVendorOrder(VendorOrder $vendorOrder): Payment;
+
+    /**
+     * Mark a pending COD payment as collected after delivery.
+     */
+    public function markCollected(Payment $payment): Payment;
 }

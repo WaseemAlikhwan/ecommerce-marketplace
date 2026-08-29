@@ -5,8 +5,11 @@ namespace App\Payments;
 use App\Contracts\PaymentGateway;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Enums\VendorOrderStatus;
+use App\Exceptions\PaymentCollectionException;
 use App\Models\Payment;
 use App\Models\VendorOrder;
+use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
 /**
@@ -29,5 +32,37 @@ final class CodPaymentGateway implements PaymentGateway
             'amount_minor' => $vendorOrder->grand_total_amount_minor,
             'collected_at' => null,
         ]);
+    }
+
+    public function markCollected(Payment $payment): Payment
+    {
+        return DB::transaction(function () use ($payment): Payment {
+            /** @var Payment $locked */
+            $locked = Payment::query()
+                ->whereKey($payment->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $locked->loadMissing('vendorOrder');
+
+            if ($locked->method !== PaymentMethod::Cod) {
+                throw PaymentCollectionException::illegalState();
+            }
+
+            if ($locked->status !== PaymentStatus::Pending) {
+                throw PaymentCollectionException::illegalState();
+            }
+
+            $vendorOrder = $locked->vendorOrder;
+            if ($vendorOrder === null || $vendorOrder->status !== VendorOrderStatus::Delivered) {
+                throw PaymentCollectionException::illegalState();
+            }
+
+            $locked->status = PaymentStatus::Collected;
+            $locked->collected_at = now();
+            $locked->save();
+
+            return $locked->fresh(['vendorOrder', 'currency']);
+        });
     }
 }

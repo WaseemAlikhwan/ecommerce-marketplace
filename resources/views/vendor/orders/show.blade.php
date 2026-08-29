@@ -33,7 +33,7 @@
                     </div>
                 </div>
 
-                @if (($canAdvance ?? false) || ($canCancel ?? false))
+                @if (($canAdvance ?? false) || ($canCancel ?? false) || ($canCollectPayment ?? false))
                     <div class="mt-6 flex flex-wrap gap-3">
                         @if ($canAdvance ?? false)
                             <form method="POST" action="{{ route('vendor.orders.advance', $order->id) }}" data-advance-action>
@@ -41,6 +41,15 @@
                                 <input type="hidden" name="status" value="{{ $nextStatus }}">
                                 <x-ui.button type="submit" variant="primary">
                                     {{ $nextActionLabel }}
+                                </x-ui.button>
+                            </form>
+                        @endif
+
+                        @if ($canCollectPayment ?? false)
+                            <form method="POST" action="{{ route('vendor.orders.collect-payment', $order->id) }}">
+                                @csrf
+                                <x-ui.button type="submit" variant="primary">
+                                    {{ __('Mark collected') }}
                                 </x-ui.button>
                             </form>
                         @endif

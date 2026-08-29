@@ -11,6 +11,7 @@ use App\Models\ParentOrder;
 use App\Models\Payment;
 use App\Models\User;
 use App\Models\VendorOrder;
+use App\Services\VendorOrderLifecycleService;
 use App\Support\Locale;
 use Database\Seeders\CommissionSettingSeeder;
 use Database\Seeders\CurrencySeeder;
@@ -116,6 +117,13 @@ class AdminOpsAdmCTest extends TestCase
             ->assertDontSeeText('Mark collected')
             ->assertDontSee($sku);
 
+        [$deliveredPayment] = $this->seedDeliveredPendingPaymentGraph($admin);
+        $this->actingAs($admin)
+            ->withCookie(Locale::COOKIE, 'en')
+            ->get(route('admin.payments.show', $deliveredPayment))
+            ->assertOk()
+            ->assertSeeText('Mark collected');
+
         $this->actingAs($admin)
             ->withCookie(Locale::COOKIE, 'en')
             ->get(route('admin.users.index'))
@@ -186,5 +194,48 @@ class AdminOpsAdmCTest extends TestCase
         ]);
 
         return [$parent->fresh(), $vendorOrder->fresh(), $payment->fresh(), $sku];
+    }
+
+    private function seedDeliveredPendingPaymentGraph(User $admin): array
+    {
+        unset($admin);
+
+        $vendorUser = $this->createVendorUser();
+        $customer = User::factory()->create();
+        $parent = ParentOrder::factory()->for($customer)->create([
+            'status' => ParentOrderStatus::Placed,
+        ]);
+        $vendorOrder = VendorOrder::factory()
+            ->forStore($vendorUser->vendor->store)
+            ->for($parent)
+            ->create([
+                'status' => VendorOrderStatus::Pending,
+                'currency_code' => 'SYP',
+                'grand_total_amount_minor' => 9_000,
+            ]);
+        OrderItem::factory()->for($vendorOrder)->create([
+            'product_name_en' => 'Delivered Product',
+            'product_name_ar' => 'منتج مسلّم',
+            'quantity' => 1,
+            'currency_code' => 'SYP',
+            'unit_price_amount_minor' => 9_000,
+            'line_total_amount_minor' => 9_000,
+            'store_name' => $vendorUser->vendor->store->name,
+            'vendor_id' => $vendorUser->vendor->id,
+            'store_id' => $vendorUser->vendor->store->id,
+        ]);
+        $payment = Payment::factory()->for($vendorOrder)->create([
+            'method' => PaymentMethod::Cod,
+            'status' => PaymentStatus::Pending,
+            'amount_minor' => 9_000,
+            'currency_code' => 'SYP',
+        ]);
+
+        $lifecycle = app(VendorOrderLifecycleService::class);
+        $confirmed = $lifecycle->confirm($vendorUser, $vendorOrder->fresh(['payment']));
+        $shipped = $lifecycle->ship($vendorUser, $confirmed);
+        $lifecycle->deliver($vendorUser, $shipped);
+
+        return [$payment->fresh(['vendorOrder'])];
     }
 }

@@ -204,6 +204,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/payments/{payment}', [AdminPaymentController::class, 'show'])
             ->whereNumber('payment')
             ->name('payments.show');
+        Route::post('/payments/{payment}/collect', [AdminPaymentController::class, 'collect'])
+            ->whereNumber('payment')
+            ->name('payments.collect');
 
         Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
 
@@ -231,6 +234,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/orders/{vendorOrder}', [VendorOrderController::class, 'show'])->name('orders.show');
         Route::post('/orders/{vendorOrder}/advance', [VendorOrderController::class, 'advance'])->name('orders.advance');
         Route::post('/orders/{vendorOrder}/cancel', [VendorOrderController::class, 'cancel'])->name('orders.cancel');
+        Route::post('/orders/{vendorOrder}/collect-payment', [VendorOrderController::class, 'collectPayment'])
+            ->name('orders.collect-payment');
     });
 });
 

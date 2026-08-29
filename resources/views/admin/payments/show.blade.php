@@ -9,6 +9,14 @@
         </x-slot:breadcrumb>
     </x-ui.page-header>
 
+    @if (session('status'))
+        <x-ui.alert tone="success" class="mb-6">{{ session('status') }}</x-ui.alert>
+    @endif
+
+    @if ($errors->any())
+        <x-ui.alert tone="danger" class="mb-6">{{ $errors->first() }}</x-ui.alert>
+    @endif
+
     <section class="max-w-xl border border-line bg-surface p-6">
         <dl class="space-y-3 text-sm">
             <div class="flex justify-between gap-3">
@@ -44,5 +52,12 @@
                 </dd>
             </div>
         </dl>
+
+        @if ($canCollect ?? false)
+            <form method="POST" action="{{ route('admin.payments.collect', $payment['id']) }}" class="mt-6">
+                @csrf
+                <x-ui.button type="submit" variant="primary">{{ __('Mark collected') }}</x-ui.button>
+            </form>
+        @endif
     </section>
 </x-admin-layout>

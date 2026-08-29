@@ -62,9 +62,23 @@ class WishlistService
         return WishlistItem::query()
             ->where('user_id', $actor->id)
             ->whereHas('product', fn ($query) => $query->storefrontVisible())
-            ->with(['product' => fn ($query) => $query->storefrontVisible()])
             ->latest('id')
             ->get();
+    }
+
+    /**
+     * Count storefront-visible wishlist items for dashboard (matches listFor visibility).
+     */
+    public function countFor(User $actor): int
+    {
+        if (! $actor->isCustomer()) {
+            return 0;
+        }
+
+        return WishlistItem::query()
+            ->where('user_id', $actor->id)
+            ->whereHas('product', fn ($query) => $query->storefrontVisible())
+            ->count();
     }
 
     /**

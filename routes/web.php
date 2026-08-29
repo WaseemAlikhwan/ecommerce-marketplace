@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Account\CustomerAddressController;
+use App\Http\Controllers\Account\DashboardController;
 use App\Http\Controllers\Account\ParentOrderController;
 use App\Http\Controllers\Account\ProductReviewController;
 use App\Http\Controllers\Account\VendorApplicationController;
@@ -35,7 +36,6 @@ use App\Http\Controllers\Vendor\ProductImageController as VendorProductImageCont
 use App\Http\Controllers\Vendor\ProductPublicationController as VendorProductPublicationController;
 use App\Http\Controllers\Vendor\StoreController;
 use App\Http\Controllers\Vendor\VendorOrderController;
-use App\Models\CustomerAddress;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -75,14 +75,7 @@ Route::post('/locale', [LocaleController::class, 'update'])
     ->name('locale.update');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        $user = auth()->user();
-        $addressCount = $user !== null && $user->isCustomer()
-            ? CustomerAddress::query()->where('user_id', $user->id)->count()
-            : 0;
-
-        return view('dashboard', ['addressCount' => $addressCount]);
-    })->name('dashboard');
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -18,6 +18,7 @@ Large implementation prompts are stored here once and executed as small slices.
 | `phase-11-hardening-hnd.md` | **DONE** — HND-A…C accepted (2026-08-26); focused HND **8 / 31**; full Docker **493 / 3999**; AR/EN **1141 / 1141**; UAT **25 / 0**; leftovers **0** |
 | `customer-address-book-addr.md` | **DONE** — ADDR-A…B accepted (2026-08-29); focused **8 / 48**; checkout inline **1 / 9**; AR/EN **1152 / 1152**; stale placeholders **0** |
 | `cod-collected-ops-col.md` | **DONE** — COL-A…B accepted (2026-08-29); focused **8 / 44**; AR/EN **1155 / 1155**; gate leftovers **0** |
+| `professional-polish-pro.md` | READY — PRO-A done (2026-08-29); focused **5 / 5**; next **PRO-B** |
 | `storefront-s8c-recovery.md` | DONE — S8C accepted |
 
 ## Rules
@@ -40,6 +41,7 @@ Large implementation prompts are stored here once and executed as small slices.
 16. Do not start Phase 11 Hardening / Handoff from Admin Ops or earlier commerce tasks. Implement Phase 11 only from `phase-11-hardening-hnd.md` when READY and a named HND-* slice is requested. Do not rebuild `DemoMarketplaceSeeder` — document/verify only.
 17. Do not start Customer Address Book from unrelated tasks. Implement only from `customer-address-book-addr.md` when READY and a named ADDR-* slice is requested. No checkout/order changes beyond shared address validation extraction.
 18. Do not start COD Collected Ops from unrelated tasks. Implement only from `cod-collected-ops-col.md` when READY and a named COL-* slice is requested. No card charge, settlement ledger, SMS, admin cancel, or auto-collect on deliver.
+19. Do not start Professional Polish from unrelated tasks. Implement only from `professional-polish-pro.md` when READY and a named PRO-* slice is requested. No F1/F2/F7, checkout/coupon/shipping changes, or new notification types beyond PRO-C scope.
 
 ## Short Prompt Template
 

@@ -7,6 +7,7 @@ use App\Models\CustomerAddress;
 use App\Models\Governorate;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\CustomerAddressService;
 use Database\Seeders\SyriaGeoSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -136,7 +137,7 @@ class CustomerAddressAddrATest extends TestCase
             'is_default' => false,
         ]);
 
-        app(\App\Services\CustomerAddressService::class)->update($address, [
+        app(CustomerAddressService::class)->update($address, [
             'label' => 'Home',
             'recipient_name' => 'Sam',
             'phone' => '+963911111111',

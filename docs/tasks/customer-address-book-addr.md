@@ -1,8 +1,8 @@
 # Customer Address Book ADDR — BR-CUS-02 V1 Account CRUD
 
-**Status:** READY (planning freeze 2026-08-29 — implement only the named slice when asked)  
+**Status:** DONE (2026-08-29) — ADDR-A…B accepted; focused **8 / 48**; checkout inline create **1 / 9**; AR/EN **1152 / 1152**  
 **Authority:** ADR-001, ADR-002, ADR-012, ADR-042; BR-CUS-02, BR-CUS-06, BR-GEO-02, BR-GEO-03, BR-GEO-05, BR-CHK-06; FR-RBAC-04  
-**Baseline:** Checkout CHK DONE — `customer_addresses` table, `CustomerAddress` model, `CustomerAddressPolicy`, checkout inline create via `PlaceCheckoutOrderRequest::resolveAddress()`; account route `account.addresses` is still a **placeholder** Blade only  
+**Baseline:** Checkout CHK DONE — `customer_addresses` table, `CustomerAddress` model, `CustomerAddressPolicy`, checkout inline create via `PlaceCheckoutOrderRequest::resolveAddress()`; account address book CRUD live at `/account/addresses` (ADDR-A…B)  
 **Related:** Fills BR-CUS-02 account surface; **does not** change checkout/order placement behavior beyond shared validation extraction
 
 Implement only the named slice when asked. Do **not** start card charge, COD collected UI, settlement ledger, SMS, advanced shipping (F4), admin address UI, maps/geo picker productization, demo seeder redesign, or checkout UX changes unless a later approved slice says so.
@@ -48,7 +48,7 @@ Implement only the named slice when asked. Do **not** start card charge, COD col
 | Slice | Primary outcome | Depends on | Status |
 |-------|-----------------|------------|--------|
 | **ADDR-A** | Account CRUD UI + shared validation extraction + HTTP tests; remove address placeholder copy | This freeze | **DONE** (2026-08-29) — focused **8 / 48** |
-| **ADDR-B** | Small gate: focused tests; AR/EN parity; stale-string check; mark DONE | ADDR-A | PENDING |
+| **ADDR-B** | Small gate: focused tests; AR/EN parity; stale-string check; mark DONE | ADDR-A | **DONE** (2026-08-29) |
 
 ```mermaid
 flowchart LR
@@ -99,7 +99,7 @@ flowchart LR
 
 ## ADDR-B — Acceptance gate
 
-**Status:** PENDING  
+**Status:** DONE (2026-08-29)  
 
 **Goal:** ADDR V1 accepted; account address book replaces placeholders; stale strings verified gone.
 
@@ -117,7 +117,23 @@ flowchart LR
 
 **Done when:** Gate table recorded; stale address placeholder strings **0**; task DONE.
 
-**Stop after ADDR-B.**
+### Gate (ADDR-B / ADDR final)
+
+| Check | Result |
+|-------|--------|
+| Focused ADDR (`CustomerAddressAddrATest`) | **8 / 48** |
+| Checkout inline-create regression (`CheckoutChkDUiTest::test_checkout_can_create_syria_address_inline`) | **1 / 9** |
+| Pint (ADDR-scoped PHP: controller, requests, service, validation, policy, checkout request refactor, routes, tests) | **PASS** (1 file auto-fixed: `CustomerAddressAddrATest.php`) |
+| `view:cache` | **PASS** |
+| AR/EN key parity | **1152 / 1152** (missing 0) |
+| Stale placeholder strings (Blade/dashboard/lang — 5 orphaned keys removed) | **0** |
+| Forbidden-ref (card charge; settlement; COD collect UI; admin address UI; maps; area level; checkout flow changes; demo seeder redesign — ADDR surfaces) | **PASS** |
+| Full Docker PHPUnit | **Not run** (per slice — focused ADDR + parity only) |
+| Gate leftovers | **0** |
+
+**Verification (ADDR-B):** Task **DONE**. BR-CUS-02 account address book live at `/account/addresses`. Checkout behavior unchanged beyond shared validation extraction. Maps, area level, admin address UI, and demo seeder redesign remain out.
+
+**Stop after ADDR-B.** (Completed.)
 
 ---
 

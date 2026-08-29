@@ -16,7 +16,7 @@ Large implementation prompts are stored here once and executed as small slices.
 | `coupons-cpn.md` | **DONE** — CPN-A…C accepted (2026-08-25); focused **19 / 140**; AR/EN **1091 / 1091**; smoke leftovers **0** |
 | `admin-ops-adm.md` | **DONE** — ADM-A…D accepted (2026-08-26); focused **12 / 146**; AR/EN **1125 / 1125**; smoke leftovers **0** |
 | `phase-11-hardening-hnd.md` | **DONE** — HND-A…C accepted (2026-08-26); focused HND **8 / 31**; full Docker **493 / 3999**; AR/EN **1141 / 1141**; UAT **25 / 0**; leftovers **0** |
-| `customer-address-book-addr.md` | READY — ADDR-A DONE (2026-08-29; focused **8 / 48**); next ADDR-B when requested |
+| `customer-address-book-addr.md` | **DONE** — ADDR-A…B accepted (2026-08-29); focused **8 / 48**; checkout inline **1 / 9**; AR/EN **1152 / 1152**; stale placeholders **0** |
 | `storefront-s8c-recovery.md` | DONE — S8C accepted |
 
 ## Rules

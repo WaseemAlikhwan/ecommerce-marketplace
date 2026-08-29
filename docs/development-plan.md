@@ -201,6 +201,8 @@ This plan is incremental. Each phase produces a demonstrable, testable slice. La
 
 **Note (2026-08-26):** Phase 11 **HND V1 handoff accepted** via Hardening HND (HND-A…C) — evaluator runbook + security checklist + UAT script; branded error pages (404/403/419/429/500); thin throttles (password-reset/register/locale); upload max documented (**5120** KB); S8C index/query note (no speculative migrations); `demo:seed` verified/documented only (no seeder rebuild). Final gate: focused HND **8 / 31**; full Docker PHPUnit **493 / 3999**; AR/EN **1141 / 1141**; brief UAT **25 / 0**; leftovers **0**. **Out of HND V1 / still Future:** card charge (F1); settlement/refund ledger (F2); SMS (F7); store rating productization; COD collected mutation UI; admin cancel; Redis application productization; Horizon; speculative index migrations; commerce reopen.
 
+**Note (2026-08-29):** **BR-CUS-02 account address book live** via Customer Address Book ADDR (ADDR-A…B) — authenticated customers manage Syria delivery addresses at `/account/addresses` (CRUD + set default); shared validation extracted from checkout; checkout inline create unchanged. Final gate: focused ADDR **8 / 48**; checkout regression **1 / 9**; AR/EN **1152 / 1152**; stale placeholder strings **0**. **Out of ADDR V1:** maps; area level; admin address UI; checkout UX changes; demo seeder redesign.
+
 ---
 
 ## Future Phases (Explicitly After V1)

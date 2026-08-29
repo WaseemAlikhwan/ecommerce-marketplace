@@ -9,17 +9,17 @@ class CustomerAddressPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->isCustomer() || $user->isStaff();
+        return $user->isCustomer();
     }
 
     public function view(User $user, CustomerAddress $address): bool
     {
-        return $user->isStaff() || $address->user_id === $user->id;
+        return $address->user_id === $user->id;
     }
 
     public function create(User $user): bool
     {
-        return $user->isCustomer() || $user->isStaff();
+        return $user->isCustomer();
     }
 
     public function update(User $user, CustomerAddress $address): bool

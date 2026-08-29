@@ -36,8 +36,14 @@
             </a>
             <a href="{{ route('account.addresses') }}" class="block border border-line bg-surface p-5 transition hover:border-ink/25">
                 <p class="text-[11px] uppercase tracking-[0.14em] text-ink-muted">{{ __('Addresses') }}</p>
-                <p class="mt-2 font-display text-heading-3">{{ __('No address book') }}</p>
-                <p class="mt-1 text-sm text-ink-muted">{{ __('Shipping addresses wait for the commerce phase.') }}</p>
+                <p class="mt-2 font-display text-heading-3">
+                    @if ($addressCount > 0)
+                        {{ trans_choice(':count saved address|:count saved addresses', $addressCount, ['count' => $addressCount]) }}
+                    @else
+                        {{ __('No addresses saved') }}
+                    @endif
+                </p>
+                <p class="mt-1 text-sm text-ink-muted">{{ __('Manage Syria delivery addresses for checkout.') }}</p>
             </a>
             @if (auth()->user()->canAccessVendorPanel())
                 <a href="{{ route('vendor.dashboard') }}" class="block border border-line bg-surface px-4 py-3 text-caption hover:border-ink/25">{{ __('Seller workspace') }}</a>

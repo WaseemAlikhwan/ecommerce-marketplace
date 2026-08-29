@@ -16,6 +16,7 @@ Large implementation prompts are stored here once and executed as small slices.
 | `coupons-cpn.md` | **DONE** — CPN-A…C accepted (2026-08-25); focused **19 / 140**; AR/EN **1091 / 1091**; smoke leftovers **0** |
 | `admin-ops-adm.md` | **DONE** — ADM-A…D accepted (2026-08-26); focused **12 / 146**; AR/EN **1125 / 1125**; smoke leftovers **0** |
 | `phase-11-hardening-hnd.md` | **DONE** — HND-A…C accepted (2026-08-26); focused HND **8 / 31**; full Docker **493 / 3999**; AR/EN **1141 / 1141**; UAT **25 / 0**; leftovers **0** |
+| `customer-address-book-addr.md` | READY — ADDR-A DONE (2026-08-29; focused **8 / 48**); next ADDR-B when requested |
 | `storefront-s8c-recovery.md` | DONE — S8C accepted |
 
 ## Rules
@@ -36,6 +37,7 @@ Large implementation prompts are stored here once and executed as small slices.
 14. Do not start Coupons from Cart, Checkout, VOL, CAN, Wishlist, or Reviews. Implement Coupons only from `coupons-cpn.md` when READY and a named CPN-* slice is requested.
 15. Do not start Admin Ops / Phase 10 dashboard from Coupons, Reviews, or earlier commerce tasks. Implement Admin Ops only from `admin-ops-adm.md` when READY and a named ADM-* slice is requested.
 16. Do not start Phase 11 Hardening / Handoff from Admin Ops or earlier commerce tasks. Implement Phase 11 only from `phase-11-hardening-hnd.md` when READY and a named HND-* slice is requested. Do not rebuild `DemoMarketplaceSeeder` — document/verify only.
+17. Do not start Customer Address Book from unrelated tasks. Implement only from `customer-address-book-addr.md` when READY and a named ADDR-* slice is requested. No checkout/order changes beyond shared address validation extraction.
 
 ## Short Prompt Template
 

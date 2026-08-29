@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Account\CustomerAddressController;
 use App\Http\Controllers\Account\ParentOrderController;
 use App\Http\Controllers\Account\ProductReviewController;
 use App\Http\Controllers\Account\VendorApplicationController;
@@ -34,6 +35,7 @@ use App\Http\Controllers\Vendor\ProductImageController as VendorProductImageCont
 use App\Http\Controllers\Vendor\ProductPublicationController as VendorProductPublicationController;
 use App\Http\Controllers\Vendor\StoreController;
 use App\Http\Controllers\Vendor\VendorOrderController;
+use App\Models\CustomerAddress;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -74,7 +76,12 @@ Route::post('/locale', [LocaleController::class, 'update'])
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        $user = auth()->user();
+        $addressCount = $user !== null && $user->isCustomer()
+            ? CustomerAddress::query()->where('user_id', $user->id)->count()
+            : 0;
+
+        return view('dashboard', ['addressCount' => $addressCount]);
     })->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -102,7 +109,21 @@ Route::middleware('auth')->group(function () {
     Route::put('/account/reviews/{productReview}', [ProductReviewController::class, 'update'])
         ->whereNumber('productReview')
         ->name('account.reviews.update');
-    Route::view('/account/addresses', 'account.addresses')->name('account.addresses');
+    Route::get('/account/addresses', [CustomerAddressController::class, 'index'])->name('account.addresses');
+    Route::get('/account/addresses/create', [CustomerAddressController::class, 'create'])->name('account.addresses.create');
+    Route::post('/account/addresses', [CustomerAddressController::class, 'store'])->name('account.addresses.store');
+    Route::get('/account/addresses/{customerAddress}/edit', [CustomerAddressController::class, 'edit'])
+        ->whereNumber('customerAddress')
+        ->name('account.addresses.edit');
+    Route::put('/account/addresses/{customerAddress}', [CustomerAddressController::class, 'update'])
+        ->whereNumber('customerAddress')
+        ->name('account.addresses.update');
+    Route::delete('/account/addresses/{customerAddress}', [CustomerAddressController::class, 'destroy'])
+        ->whereNumber('customerAddress')
+        ->name('account.addresses.destroy');
+    Route::post('/account/addresses/{customerAddress}/default', [CustomerAddressController::class, 'setDefault'])
+        ->whereNumber('customerAddress')
+        ->name('account.addresses.default');
     Route::get('/account/vendor-application', [VendorApplicationController::class, 'show'])->name('account.vendor-application');
     Route::post('/account/vendor-application', [VendorApplicationController::class, 'store'])->name('account.vendor-application.store');
 

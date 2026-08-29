@@ -18,7 +18,7 @@ Large implementation prompts are stored here once and executed as small slices.
 | `phase-11-hardening-hnd.md` | **DONE** — HND-A…C accepted (2026-08-26); focused HND **8 / 31**; full Docker **493 / 3999**; AR/EN **1141 / 1141**; UAT **25 / 0**; leftovers **0** |
 | `customer-address-book-addr.md` | **DONE** — ADDR-A…B accepted (2026-08-29); focused **8 / 48**; checkout inline **1 / 9**; AR/EN **1152 / 1152**; stale placeholders **0** |
 | `cod-collected-ops-col.md` | **DONE** — COL-A…B accepted (2026-08-29); focused **8 / 44**; AR/EN **1155 / 1155**; gate leftovers **0** |
-| `professional-polish-pro.md` | READY — PRO-A done (2026-08-29); focused **5 / 5**; next **PRO-B** |
+| `professional-polish-pro.md` | READY — PRO-A/B done (2026-08-29); next **PRO-C** |
 | `storefront-s8c-recovery.md` | DONE — S8C accepted |
 
 ## Rules

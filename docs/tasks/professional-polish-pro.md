@@ -45,7 +45,7 @@ Implement only the named slice when asked. Do **not** start card charge (F1), se
 | Slice | Primary outcome | Depends on | Status |
 |-------|-----------------|------------|--------|
 | **PRO-A** | Customer dashboard live (CUS-DB): controller, recent orders, wishlist count, stale copy removed | This freeze | DONE |
-| **PRO-B** | Storefront trust-strip + vendor dashboard KPI polish; stale-string grep on touched surfaces | PRO-A optional | PENDING |
+| **PRO-B** | Storefront trust-strip + vendor dashboard KPI polish; stale-string grep on touched surfaces | PRO-A optional | DONE |
 | **PRO-C** | In-app notification center (NTF-lite): DB notifications list + mark read | PRO-A optional | PENDING |
 | **PRO-D** | Gate: focused PRO tests; Pint; `view:cache`; AR/EN parity; forbidden-ref; mark DONE | PRO-A, PRO-B, PRO-C | PENDING |
 
@@ -89,7 +89,7 @@ flowchart LR
 
 ## PRO-B — Storefront & vendor polish
 
-**Status:** PENDING  
+**Status:** DONE (2026-08-29) — focused **3 / 3**; AR/EN keys added for trust-strip + vendor KPIs
 
 **Goal:** Storefront trust strip and vendor dashboard reflect live commerce; stale “later phase” copy removed from touched surfaces.
 

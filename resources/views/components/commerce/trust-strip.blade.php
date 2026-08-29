@@ -2,9 +2,9 @@
 
 @php
     $items = $items ?? [
-        ['title' => __('Secure checkout'), 'text' => __('Payment stays in a later phase'), 'icon' => 'lock'],
+        ['title' => __('Secure checkout'), 'text' => __('Pay with cash on delivery (COD).'), 'icon' => 'lock'],
         ['title' => __('Trusted sellers'), 'text' => __('Independent Syrian stores'), 'icon' => 'store'],
-        ['title' => __('Reliable delivery'), 'text' => __('City delivery when commerce opens'), 'icon' => 'truck'],
+        ['title' => __('Reliable delivery'), 'text' => __('Delivery across Syrian cities.'), 'icon' => 'truck'],
         ['title' => __('Customer support'), 'text' => __('A person, not a ticket maze'), 'icon' => 'chat'],
     ];
 @endphp

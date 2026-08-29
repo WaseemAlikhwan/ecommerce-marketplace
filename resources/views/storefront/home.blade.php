@@ -55,6 +55,12 @@
         </div>
     </section>
 
+    <section class="border-b border-line bg-surface py-10 md:py-12" aria-label="{{ __('Why shop with us') }}">
+        <div class="ds-container">
+            <x-commerce.trust-strip />
+        </div>
+    </section>
+
     <section class="ds-container py-16 md:py-24">
         <x-commerce.section-heading :kicker="__('Departments')" :title="__('Start where the house starts.')">
             <x-slot:actions>

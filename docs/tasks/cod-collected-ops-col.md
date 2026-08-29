@@ -1,8 +1,8 @@
 # COD Collected Ops COL — BR-PAY-04 V1 Mark Collected UI
 
-**Status:** READY (planning freeze 2026-08-29 — implement only the named slice when asked)  
+**Status:** DONE (2026-08-29) — COL-A…B accepted; focused **8 / 44**; AR/EN **1155 / 1155**  
 **Authority:** ADR-001, ADR-002, ADR-005, ADR-012, **ADR-042**; BR-PAY-03, **BR-PAY-04**, BR-VO-02, BR-VO-03, BR-CAN / BR-REF-02 (cancel side); FR-RBAC-04  
-**Baseline:** Checkout CHK DONE — one COD `Payment` per Vendor Order (`pending` at placement); VOL DONE — VO `pending→confirmed→shipped→delivered` without touching payment; CAN DONE — cancel sets `pending→cancelled`, **blocks** cancel when already `collected`; ADM DONE — staff **read-only** payment screens with KPI counts by status; **no** collect mutation yet  
+**Baseline:** Checkout CHK DONE — one COD `Payment` per Vendor Order; VOL/CAN unchanged; **COL-A…B** — staff/vendor **Mark collected** on delivered VOs live at admin payment show + vendor order show  
 **Related:** Closes the deferred **COD collected mutation UI** called out in VOL, CAN, ADM, HND, and ADDR hard boundaries. **Does not** close BR-PAY-05 physical collector/settlement narrative (software auth only).
 
 Implement only the named slice when asked. Do **not** start card charge (F1), settlement/refund ledger (F2), SMS (F7), admin cancel, payment-only cancel UI, auto-collect on deliver, collected reversal, Parent derivation, demo seeder redesign, or checkout changes unless a later approved slice says so.
@@ -53,7 +53,7 @@ Implement only the named slice when asked. Do **not** start card charge (F1), se
 | Slice | Primary outcome | Depends on | Status |
 |-------|-----------------|------------|--------|
 | **COL-A** | Collect service + policy + staff/vendor POST routes + Blade actions + focused HTTP/domain tests | This freeze | **DONE** (2026-08-29) — focused **8 / 44** |
-| **COL-B** | Small gate: Pint; `view:cache`; AR/EN parity; forbidden-ref; mark DONE | COL-A | PENDING |
+| **COL-B** | Small gate: Pint; `view:cache`; AR/EN parity; forbidden-ref; mark DONE | COL-A | **DONE** (2026-08-29) |
 
 ```mermaid
 flowchart LR
@@ -103,7 +103,7 @@ flowchart LR
 
 ## COL-B — Acceptance gate
 
-**Status:** PENDING  
+**Status:** DONE (2026-08-29)  
 
 **Goal:** COL V1 accepted; COD `pending → collected` operational for staff and vendors; forbidden surfaces unchanged.
 
@@ -116,7 +116,21 @@ flowchart LR
 
 **Done when:** Gate table recorded; task DONE.
 
-**Stop after COL-B.**
+### Gate (COL-B / COL final)
+
+| Check | Result |
+|-------|--------|
+| Focused COL (`CodCollectedOpsColATest`) | **8 / 44** |
+| Pint (COL-scoped PHP: gateway, exception, policy, controllers, routes, tests) | **PASS** |
+| `view:cache` | **PASS** |
+| AR/EN key parity | **1155 / 1155** (missing 0) |
+| Forbidden-ref (card charge; settlement ledger; SMS; auto-collect on deliver; admin cancel; payment-only cancel; checkout changes; demo seeder redesign — COL surfaces) | **PASS** |
+| Full Docker PHPUnit | **Not run** (per slice — focused COL + parity only) |
+| Gate leftovers | **0** |
+
+**Verification (COL-B):** Task **DONE**. BR-PAY-04 COD mark-collected UI live for staff and owning vendors on delivered VOs. Cancel stays CAN-only; F1/F2/F7 remain out.
+
+**Stop after COL-B.** (Completed.)
 
 ---
 

@@ -17,6 +17,7 @@ Large implementation prompts are stored here once and executed as small slices.
 | `admin-ops-adm.md` | **DONE** — ADM-A…D accepted (2026-08-26); focused **12 / 146**; AR/EN **1125 / 1125**; smoke leftovers **0** |
 | `phase-11-hardening-hnd.md` | **DONE** — HND-A…C accepted (2026-08-26); focused HND **8 / 31**; full Docker **493 / 3999**; AR/EN **1141 / 1141**; UAT **25 / 0**; leftovers **0** |
 | `customer-address-book-addr.md` | **DONE** — ADDR-A…B accepted (2026-08-29); focused **8 / 48**; checkout inline **1 / 9**; AR/EN **1152 / 1152**; stale placeholders **0** |
+| `cod-collected-ops-col.md` | **DONE** — COL-A…B accepted (2026-08-29); focused **8 / 44**; AR/EN **1155 / 1155**; gate leftovers **0** |
 | `storefront-s8c-recovery.md` | DONE — S8C accepted |
 
 ## Rules
@@ -38,6 +39,7 @@ Large implementation prompts are stored here once and executed as small slices.
 15. Do not start Admin Ops / Phase 10 dashboard from Coupons, Reviews, or earlier commerce tasks. Implement Admin Ops only from `admin-ops-adm.md` when READY and a named ADM-* slice is requested.
 16. Do not start Phase 11 Hardening / Handoff from Admin Ops or earlier commerce tasks. Implement Phase 11 only from `phase-11-hardening-hnd.md` when READY and a named HND-* slice is requested. Do not rebuild `DemoMarketplaceSeeder` — document/verify only.
 17. Do not start Customer Address Book from unrelated tasks. Implement only from `customer-address-book-addr.md` when READY and a named ADDR-* slice is requested. No checkout/order changes beyond shared address validation extraction.
+18. Do not start COD Collected Ops from unrelated tasks. Implement only from `cod-collected-ops-col.md` when READY and a named COL-* slice is requested. No card charge, settlement ledger, SMS, admin cancel, or auto-collect on deliver.
 
 ## Short Prompt Template
 

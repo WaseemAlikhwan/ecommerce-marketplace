@@ -203,6 +203,8 @@ This plan is incremental. Each phase produces a demonstrable, testable slice. La
 
 **Note (2026-08-29):** **BR-CUS-02 account address book live** via Customer Address Book ADDR (ADDR-A…B) — authenticated customers manage Syria delivery addresses at `/account/addresses` (CRUD + set default); shared validation extracted from checkout; checkout inline create unchanged. Final gate: focused ADDR **8 / 48**; checkout regression **1 / 9**; AR/EN **1152 / 1152**; stale placeholder strings **0**. **Out of ADDR V1:** maps; area level; admin address UI; checkout UX changes; demo seeder redesign.
 
+**Note (2026-08-29):** **BR-PAY-04 COD mark-collected UI live** via COD Collected Ops COL (COL-A…B) — staff and owning vendors mark `pending → collected` on **delivered** Vendor Orders (`PaymentGateway::markCollected`, admin payment show + vendor order show); deliver does not auto-collect; cancel stays CAN-only. Final gate: focused COL **8 / 44**; AR/EN **1155 / 1155**; forbidden-ref pass. **Out of COL V1:** F1 card charge; F2 settlement ledger; F7 SMS; admin cancel; auto-collect on deliver; collected reversal.
+
 ---
 
 ## Future Phases (Explicitly After V1)

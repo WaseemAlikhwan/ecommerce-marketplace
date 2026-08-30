@@ -205,6 +205,8 @@ This plan is incremental. Each phase produces a demonstrable, testable slice. La
 
 **Note (2026-08-29):** **BR-PAY-04 COD mark-collected UI live** via COD Collected Ops COL (COL-A…B) — staff and owning vendors mark `pending → collected` on **delivered** Vendor Orders (`PaymentGateway::markCollected`, admin payment show + vendor order show); deliver does not auto-collect; cancel stays CAN-only. Final gate: focused COL **8 / 44**; AR/EN **1155 / 1155**; forbidden-ref pass. **Out of COL V1:** F1 card charge; F2 settlement ledger; F7 SMS; admin cancel; auto-collect on deliver; collected reversal.
 
+**Note (2026-08-30):** **Production polish PRO live** via Professional Polish PRO (PRO-A…D) — customer `/dashboard` shows recent orders + wishlist count; storefront trust strip and vendor dashboard use live COD/Syria copy + order KPIs; header notification tray wired to database notifications with mark-read. Final gate: focused PRO **16 / 73**; AR/EN **1169 / 1169**; stale PRO Blade placeholders **0**. **Out of PRO V1:** F1/F2/F7; checkout/coupon/shipping changes; new notification types; demo seeder redesign.
+
 ---
 
 ## Future Phases (Explicitly After V1)

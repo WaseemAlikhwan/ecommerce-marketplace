@@ -1,6 +1,6 @@
 # Professional Polish PRO — Production-Ready Account & Surfaces
 
-**Status:** READY (planning freeze 2026-08-29 — implement only the named slice when asked)  
+**Status:** DONE (2026-08-30) — PRO-A…D accepted; focused **16 / 73**; AR/EN **1169 / 1169**; gate leftovers **0**  
 **Authority:** ADR-001, ADR-002, ADR-012, ADR-042; BR-CUS-02, BR-CUS-06, BR-NTF-01; OPEN-018 (wishlist); checkout/order/wishlist/notification baselines  
 **Baseline:** Commerce V1 live — checkout, orders, wishlist, addresses, COL mark-collected; customer `/dashboard` still uses a **Route closure** with placeholder copy (“When checkout launches…”, “Heart a piece…”, hardcoded empty states); trust-strip and vendor dashboard retain “later phase” strings; notifications tray is a visual placeholder  
 **Related:** Makes the marketplace feel production-ready without reopening checkout, coupons, shipping rules, F1/F2/F7, or new notification types.
@@ -47,7 +47,7 @@ Implement only the named slice when asked. Do **not** start card charge (F1), se
 | **PRO-A** | Customer dashboard live (CUS-DB): controller, recent orders, wishlist count, stale copy removed | This freeze | DONE |
 | **PRO-B** | Storefront trust-strip + vendor dashboard KPI polish; stale-string grep on touched surfaces | PRO-A optional | DONE |
 | **PRO-C** | In-app notification center (NTF-lite): DB notifications list + mark read | PRO-A optional | DONE |
-| **PRO-D** | Gate: focused PRO tests; Pint; `view:cache`; AR/EN parity; forbidden-ref; mark DONE | PRO-A, PRO-B, PRO-C | PENDING |
+| **PRO-D** | Gate: focused PRO tests; Pint; `view:cache`; AR/EN parity; forbidden-ref; mark DONE | PRO-A, PRO-B, PRO-C | DONE |
 
 ```mermaid
 flowchart LR
@@ -134,7 +134,7 @@ flowchart LR
 
 ## PRO-D — Acceptance gate
 
-**Status:** PENDING  
+**Status:** DONE (2026-08-30)  
 
 **Goal:** PRO V1 accepted; production polish complete; forbidden surfaces unchanged.
 
@@ -147,7 +147,25 @@ flowchart LR
 
 **Done when:** Gate table recorded; task DONE.
 
-**Stop after PRO-D.**
+### Gate (PRO-D / PRO final)
+
+| Check | Result |
+|-------|--------|
+| Focused PRO-A (`ProfessionalPolishProATest`) | **5 / 24** |
+| Focused PRO-B (`ProfessionalPolishProBTest`) | **3 / 18** |
+| Focused PRO-C (`ProfessionalPolishProCTest`) | **8 / 31** |
+| Focused PRO total | **16 / 73** |
+| Pint (PRO-scoped PHP: controllers, services, notifications, provider, routes, tests) | **PASS** |
+| `view:cache` | **PASS** |
+| AR/EN key parity (`scripts/lang-parity.php`) | **1169 / 1169** (missing 0) |
+| Stale-string (PRO-A/B Blade: checkout launches; heart a piece; later-phase trust-strip; vendor dashboard placeholder; notification tray placeholder) | **PASS** — 0 hits on touched Blade |
+| Forbidden-ref (F1 card charge; F2 settlement ledger; F7 SMS; checkout/coupon/shipping changes; demo seeder redesign; new notification types — PRO surfaces) | **PASS** |
+| Full Docker PHPUnit | **Not run** (per slice — focused PRO + parity only) |
+| Gate leftovers | **0** |
+
+**Verification (PRO-D):** Task **DONE**. Customer dashboard live; storefront trust strip + vendor KPIs polished; database notification tray wired with mark-read. F1/F2/F7, checkout/coupon/shipping, and demo seeder unchanged on PRO surfaces.
+
+**Stop after PRO-D.** (Completed.)
 
 ---
 

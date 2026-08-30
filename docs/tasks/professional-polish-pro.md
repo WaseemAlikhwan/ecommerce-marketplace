@@ -46,7 +46,7 @@ Implement only the named slice when asked. Do **not** start card charge (F1), se
 |-------|-----------------|------------|--------|
 | **PRO-A** | Customer dashboard live (CUS-DB): controller, recent orders, wishlist count, stale copy removed | This freeze | DONE |
 | **PRO-B** | Storefront trust-strip + vendor dashboard KPI polish; stale-string grep on touched surfaces | PRO-A optional | DONE |
-| **PRO-C** | In-app notification center (NTF-lite): DB notifications list + mark read | PRO-A optional | PENDING |
+| **PRO-C** | In-app notification center (NTF-lite): DB notifications list + mark read | PRO-A optional | DONE |
 | **PRO-D** | Gate: focused PRO tests; Pint; `view:cache`; AR/EN parity; forbidden-ref; mark DONE | PRO-A, PRO-B, PRO-C | PENDING |
 
 ```mermaid
@@ -111,7 +111,7 @@ flowchart LR
 
 ## PRO-C — In-app notification center (NTF-lite)
 
-**Status:** PENDING  
+**Status:** DONE (2026-08-30) — focused **8 / 8**; AR/EN keys added for tray actions
 
 **Goal:** Authenticated users see real database notifications in the header tray; mark-as-read works.
 

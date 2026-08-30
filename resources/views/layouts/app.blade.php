@@ -11,6 +11,7 @@
             <x-brand.logo />
             <div class="flex items-center gap-2">
                 @include('partials.locale-switcher')
+                @include('layouts.partials.notifications')
                 @include('layouts.partials.user-menu')
             </div>
         </div>

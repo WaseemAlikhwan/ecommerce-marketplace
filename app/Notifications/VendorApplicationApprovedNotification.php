@@ -19,7 +19,7 @@ class VendorApplicationApprovedNotification extends Notification implements Shou
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -30,5 +30,20 @@ class VendorApplicationApprovedNotification extends Notification implements Shou
                 'name' => $this->application->store_name,
             ]))
             ->action(__('Open seller workspace'), route('vendor.dashboard'));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        return [
+            'type' => 'vendor_application_approved',
+            'vendor_application_id' => $this->application->id,
+            'store_name' => $this->application->store_name,
+            'message' => __('Your store :name is ready. You can now open the seller workspace.', [
+                'name' => $this->application->store_name,
+            ]),
+        ];
     }
 }

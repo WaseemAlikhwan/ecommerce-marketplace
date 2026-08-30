@@ -19,7 +19,7 @@ class VendorApplicationRejectedNotification extends Notification implements Shou
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -37,5 +37,20 @@ class VendorApplicationRejectedNotification extends Notification implements Shou
         $mail->action(__('View application'), route('account.vendor-application'));
 
         return $mail;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        return [
+            'type' => 'vendor_application_rejected',
+            'vendor_application_id' => $this->application->id,
+            'store_name' => $this->application->store_name,
+            'message' => __('Your vendor application for :name was rejected.', [
+                'name' => $this->application->store_name,
+            ]),
+        ];
     }
 }

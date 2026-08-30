@@ -11,9 +11,11 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Payments\CodPaymentGateway;
 use App\Policies\AdminDashboardPolicy;
+use App\Services\NotificationViewService;
 use App\Shipping\FlatPerVendorShippingCalculator;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -73,6 +75,26 @@ class AppServiceProvider extends ServiceProvider
             }
 
             return $query->firstOrFail();
+        });
+
+        View::composer('layouts.partials.notifications', function ($view): void {
+            $user = auth()->user();
+
+            if ($user === null) {
+                $view->with([
+                    'notificationRows' => [],
+                    'unreadNotificationCount' => 0,
+                ]);
+
+                return;
+            }
+
+            $notifications = app(NotificationViewService::class);
+
+            $view->with([
+                'notificationRows' => $notifications->trayRows($user),
+                'unreadNotificationCount' => $notifications->unreadCount($user),
+            ]);
         });
     }
 }

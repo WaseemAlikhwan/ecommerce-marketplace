@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Account\CustomerAddressController;
 use App\Http\Controllers\Account\DashboardController;
+use App\Http\Controllers\Account\NotificationController;
 use App\Http\Controllers\Account\ParentOrderController;
 use App\Http\Controllers\Account\ProductReviewController;
 use App\Http\Controllers\Account\VendorApplicationController;
@@ -119,6 +120,8 @@ Route::middleware('auth')->group(function () {
         ->name('account.addresses.default');
     Route::get('/account/vendor-application', [VendorApplicationController::class, 'show'])->name('account.vendor-application');
     Route::post('/account/vendor-application', [VendorApplicationController::class, 'store'])->name('account.vendor-application.store');
+    Route::post('/account/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('account.notifications.read-all');
+    Route::post('/account/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('account.notifications.read');
 
     Route::middleware('staff')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/', AdminDashboardController::class)->name('dashboard');
